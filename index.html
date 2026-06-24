@@ -2,1101 +2,283 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>InsightGrid Analytics & Automation — Usama Shafiq</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>InsightGrid Analytics & Automation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --void:#f4f0e4;
-  --deep:#e8e1cf;
-  --panel:#ffffff;
-  --panel2:#f7f3ea;
-  --blue:#6B7A3D;
-  --cyan:#B59A52;
-  --violet:#8A7A4F;
-  --pink:#C3B091;
-  --gold:#f59e0b;
-  --green:#10b981;
-  --white:#222222;
-  --muted:#6b6b6b;
-  --dim:#1a2e4a;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Space Grotesk',sans-serif;
-background:linear-gradient(135deg,#f8f6f0,#ece8dc,#d8cfbb);
-color:var(--white);overflow-x:hidden}
+  :root {
+    --bg-main: #0c0f0d;
+    --bg-card: #141815;
+    --gold: #dfa640;
+    --gold-hover: #c48f32;
+    --text-main: #f4f4f4;
+    --text-muted: #a0a5a1;
+    --border: #2a302c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  a { text-decoration: none; color: inherit; }
+  ul { list-style: none; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 5%; }
 
-/* ── CANVAS ── */
-#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+  /* Nav */
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 5%; border-bottom: 1px solid var(--border);
+  }
+  .logo { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+  .logo span { color: var(--text-muted); font-size: 0.8rem; font-weight: 400; display: block; }
+  .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; font-weight: 500; }
+  .nav-links a.active { color: var(--gold); border-bottom: 2px solid var(--gold); padding-bottom: 0.2rem; }
+  .btn-gold {
+    background: var(--gold); color: #000; padding: 0.6rem 1.2rem;
+    border-radius: 6px; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: none;
+  }
 
-/* ── NOISE OVERLAY ── */
-body::before{
-  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  opacity:.025;
-}
+  /* Hero */
+  .hero {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    padding: 4rem 0; align-items: center; background: radial-gradient(circle at 80% 50%, rgba(223, 166, 64, 0.05) 0%, transparent 50%);
+  }
+  .badges { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+  .badge { border: 1px solid var(--gold); color: var(--gold); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .hero h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem; font-weight: 700; }
+  .hero p { color: var(--text-muted); margin-bottom: 1.5rem; max-width: 90%; }
+  .hero-author { font-size: 1.1rem; font-weight: 600; color: var(--gold); margin-bottom: 0.2rem; }
+  .hero-title { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
+  .hero-btns { display: flex; gap: 1rem; margin-bottom: 3rem; }
+  .btn-outline {
+    border: 1px solid var(--gold); color: var(--text-main); padding: 0.6rem 1.2rem;
+    border-radius: 6px; font-weight: 500; font-size: 0.9rem; background: transparent; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .stats { display: flex; gap: 2rem; background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); }
+  .stat h3 { font-size: 1.5rem; color: var(--gold); }
+  .stat p { font-size: 0.75rem; color: var(--text-muted); margin: 0; }
+  
+  /* Hero Right Panel */
+  .hero-right { position: relative; }
+  .hero-right img { width: 100%; border-radius: 20px; opacity: 0.8; }
+  .analytics-panel {
+    position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+    background: rgba(20, 24, 21, 0.8); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px;
+  }
+  .analytics-panel h4 { font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-main); }
+  .analytics-panel ul li { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+  .analytics-panel ul li::before { content: '✓'; color: var(--gold); font-weight: bold; }
 
-/* ── NAV ── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:200;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:.9rem 5%;
-  background:rgba(2,4,10,0.75);
-  backdrop-filter:blur(24px) saturate(180%);
-  border-bottom:1px solid rgba(0,212,255,0.08);
-}
-.logo{
-  font-family:'Orbitron',monospace;font-weight:900;font-size:1.05rem;
-  letter-spacing:.08em;color:var(--white);
-  text-shadow:0 0 20px rgba(0,212,255,0.4);
-}
-.logo em{font-style:normal;color:var(--cyan)}
-.nav-links{display:flex;gap:2rem;list-style:none}
-.nav-links a{
-  color:var(--muted);text-decoration:none;font-size:.82rem;
-  font-weight:500;letter-spacing:.04em;transition:color .2s;
-}
-.nav-links a:hover{color:var(--cyan)}
-.nav-cta{
-  display:flex;align-items:center;gap:.5rem;
-  background:linear-gradient(135deg,var(--blue),var(--violet));
-  color:#fff;padding:.5rem 1.3rem;border-radius:6px;
-  text-decoration:none;font-size:.82rem;font-weight:600;
-  letter-spacing:.03em;
-  box-shadow:0 0 24px rgba(29,106,245,0.35);
-  transition:opacity .2s,transform .15s;
-}
-.nav-cta:hover{opacity:.85;transform:translateY(-1px)}
+  /* Section Titles */
+  .section-title {
+    display: flex; align-items: center; justify-content: center; gap: 1rem;
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; color: var(--text-main);
+    text-transform: uppercase; margin: 4rem 0 2rem;
+  }
+  .section-title::before, .section-title::after { content: ''; height: 1px; width: 50px; background: var(--gold); }
 
-/* ── PAGE WRAPPER ── */
-.page{position:relative;z-index:2}
+  /* Solutions Cards */
+  .solutions-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+  .sol-card {
+    background: var(--bg-card); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px;
+  }
+  .sol-card h4 { font-size: 1rem; margin: 1rem 0 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .sol-card p { font-size: 0.8rem; color: var(--text-muted); }
 
-/* ══════════════════════════════
-   HERO
-══════════════════════════════ */
-.hero{
-  min-height:100vh;display:grid;
-  grid-template-columns:1fr 1fr;
-  align-items:center;gap:3rem;
-  padding:7rem 5% 5rem;
-}
-.hero-left{}
-.badge-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.8rem}
-.badge{
-  display:inline-flex;align-items:center;gap:.4rem;
-  font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  padding:.35rem .85rem;border-radius:20px;
-}
-.badge-top{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);color:var(--gold)}
-.badge-upwork{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green);text-decoration:none;transition:background .2s}
-.badge-upwork:hover{background:rgba(16,185,129,0.2)}
-.hero h1{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(1.8rem,3.8vw,3rem);
-  font-weight:900;line-height:1.1;
-  letter-spacing:-.01em;color:var(--white);
-  margin-bottom:.6rem;
-}
-.hero h1 .g{
-  background:linear-gradient(90deg,var(--cyan) 0%,var(--blue) 40%,var(--violet) 80%,var(--pink) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-size:200%;
-  animation:shimmer 4s linear infinite;
-}
-@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
-.hero-sub{
-  font-size:.98rem;line-height:1.75;color:var(--muted);
-  max-width:480px;margin-bottom:.6rem;
-}
-.hero-name{
-  font-size:1rem;color:var(--white);font-weight:600;
-  margin-bottom:2rem;
-}
-.hero-name span{color:var(--cyan)}
-.hero-btns{display:flex;gap:.85rem;flex-wrap:wrap;margin-bottom:3rem}
-.btn-prime{
-  background:linear-gradient(135deg,var(--blue),var(--cyan));
-  color:#fff;padding:.8rem 1.8rem;border-radius:8px;
-  font-weight:700;font-size:.88rem;text-decoration:none;
-  box-shadow:0 0 30px rgba(0,212,255,0.25);
-  transition:transform .2s,box-shadow .2s;
-  letter-spacing:.02em;
-}
-.btn-prime:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(0,212,255,0.45)}
-.btn-sec{
-  border:1px solid rgba(0,212,255,0.25);color:var(--white);
-  padding:.8rem 1.8rem;border-radius:8px;font-weight:500;
-  font-size:.88rem;text-decoration:none;
-  transition:border-color .2s,color .2s,background .2s;
-}
-.btn-sec:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.04)}
-.hero-stats{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:1rem;
-}
-.stat{
-  background:rgba(10,22,40,0.8);
-  border:1px solid rgba(0,212,255,0.1);
-  border-radius:10px;padding:.9rem;text-align:center;
-  backdrop-filter:blur(10px);
-  transition:border-color .2s,transform .2s;
-}
-.stat:hover{border-color:rgba(0,212,255,0.3);transform:translateY(-2px)}
-.sv{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:700;
-  background:linear-gradient(135deg,var(--white),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.sl{font-size:.65rem;color:var(--muted);margin-top:.2rem;letter-spacing:.04em}
+  /* Gallery */
+  .gallery-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+  .tab { padding: 0.5rem 1.5rem; border: 1px solid var(--border); border-radius: 20px; font-size: 0.85rem; background: var(--bg-card); color: var(--text-muted); }
+  .tab.active { background: var(--gold); color: #000; border-color: var(--gold); }
+  .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .dash-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+  .dash-card img { width: 100%; border-radius: 8px; margin-top: 1rem; background: #000; min-height: 150px; }
+  .dash-title { font-size: 0.9rem; font-weight: 600; }
 
-/* HERO RIGHT — live dashboard */
-.hero-dash{position:relative;perspective:1200px}
-.dash-tilt{
-  background:rgba(10,22,40,0.9);
-  border:1px solid rgba(0,212,255,0.15);
-  border-radius:20px;padding:1.4rem;
-  transform:rotateY(-14deg) rotateX(5deg) rotateZ(-1deg);
-  box-shadow:
-    24px 24px 80px rgba(0,0,0,0.6),
-    0 0 60px rgba(29,106,245,0.1),
-    inset 0 1px 0 rgba(255,255,255,0.05);
-  transition:transform .5s ease;
-  animation:float4d 7s ease-in-out infinite;
-}
-@keyframes float4d{
-  0%,100%{transform:rotateY(-14deg) rotateX(5deg) rotateZ(-1deg) translateY(0)}
-  25%{transform:rotateY(-10deg) rotateX(3deg) rotateZ(-0.5deg) translateY(-10px)}
-  50%{transform:rotateY(-16deg) rotateX(6deg) rotateZ(-1.5deg) translateY(-6px)}
-  75%{transform:rotateY(-12deg) rotateX(4deg) rotateZ(-0.8deg) translateY(-14px)}
-}
-.dash-tilt:hover{animation:none;transform:rotateY(-6deg) rotateX(2deg) rotateZ(0deg)}
-.dtbar{display:flex;align-items:center;gap:.4rem;margin-bottom:1rem}
-.dtdot{width:8px;height:8px;border-radius:50%}
-.dttitle{font-size:.68rem;color:var(--muted);margin-left:.4rem;letter-spacing:.06em}
-.live-dot{
-  width:6px;height:6px;background:var(--green);border-radius:50%;
-  margin-left:auto;box-shadow:0 0 6px var(--green);
-  animation:pulse 2s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem}
-.kpi{background:rgba(29,106,245,0.07);border:1px solid rgba(29,106,245,0.12);border-radius:8px;padding:.7rem}
-.kv{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--white)}
-.kl{font-size:.58rem;color:var(--muted);margin-top:.15rem}
-.kt{font-size:.65rem;font-weight:600;margin-top:.3rem}
-.up{color:var(--green)}.dn{color:#ef4444}
-.chart-mini{border-radius:8px;overflow:hidden;margin-bottom:.7rem;background:rgba(29,106,245,0.04);border:1px solid rgba(29,106,245,0.1);padding:.5rem}
-.chart-mini canvas{max-height:90px}
-.chart-row2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
-.chart-mini2{border-radius:8px;overflow:hidden;background:rgba(29,106,245,0.04);border:1px solid rgba(29,106,245,0.1);padding:.5rem}
-.chart-mini2 canvas{max-height:75px}
+  /* Workflows */
+  .workflow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .wf-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; text-align: center; }
+  .wf-card img { width: 100%; border-radius: 8px; margin: 1rem 0; background: #fff; min-height: 80px; }
+  .wf-card h4 { font-size: 0.85rem; }
+  .wf-card p { font-size: 0.75rem; color: var(--text-muted); background: #1a1e1b; padding: 0.5rem; border-radius: 6px; margin-top: 0.5rem; }
+  .btn-center { display: flex; justify-content: center; margin-top: 2rem; }
 
-/* ══════════════════════════════
-   SECTION COMMONS
-══════════════════════════════ */
-.sec{padding:6rem 5%;position:relative}
-.sec-hl{
-  display:inline-block;font-size:.68rem;font-weight:700;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);
-  margin-bottom:.8rem;
-}
-.sec-hl::before{content:'// ';opacity:.4}
-.sec-h{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(1.6rem,3vw,2.4rem);
-  font-weight:900;color:var(--white);
-  letter-spacing:-.015em;line-height:1.15;margin-bottom:1rem;
-}
-.sec-p{font-size:.95rem;color:var(--muted);line-height:1.75;max-width:500px}
+  /* Testimonials */
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .testi-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .testi-card .stars { color: var(--gold); margin-bottom: 1rem; font-size: 1.2rem; }
+  .testi-card p { font-size: 0.85rem; color: var(--text-main); margin-bottom: 1.5rem; }
+  .client-info { display: flex; align-items: center; gap: 1rem; }
+  .client-info img { width: 40px; height: 40px; border-radius: 50%; background: #333; }
+  .client-info h5 { font-size: 0.9rem; color: var(--gold); }
+  .client-info span { font-size: 0.75rem; color: var(--text-muted); }
 
-/* ══════════════════════════════
-   LIVE CHARTS SHOWCASE
-══════════════════════════════ */
-.charts-sec{background:linear-gradient(180deg,var(--void) 0%,rgba(6,13,28,1) 100%)}
-.charts-header{text-align:center;margin-bottom:3.5rem}
-.charts-header .sec-p{margin:0 auto}
-.charts-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:auto auto;
-  gap:1.5rem;
-}
-.chart-card{
-  background:rgba(10,22,40,0.85);
-  border:1px solid rgba(0,212,255,0.1);
-  border-radius:16px;padding:1.5rem;
-  backdrop-filter:blur(12px);
-  transition:transform .3s,border-color .3s,box-shadow .3s;
-  position:relative;overflow:hidden;
-}
-.chart-card::before{
-  content:'';position:absolute;
-  top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--violet));
-  opacity:0;transition:opacity .3s;
-}
-.chart-card:hover{
-  transform:translateY(-5px);
-  border-color:rgba(0,212,255,0.25);
-  box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 40px rgba(0,212,255,0.06);
-}
-.chart-card:hover::before{opacity:1}
-.chart-card.wide{grid-column:span 2}
-.cc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
-.cc-title{font-size:.82rem;font-weight:700;color:var(--white);letter-spacing:.03em}
-.cc-badge{
-  font-size:.62rem;font-weight:700;padding:.2rem .6rem;
-  border-radius:12px;letter-spacing:.06em;
-}
-.live{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:var(--green)}
-.pbi{background:rgba(243,154,30,0.12);border:1px solid rgba(243,154,30,0.3);color:#f9a825}
-.tab{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--cyan)}
-.alx{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);color:var(--violet)}
-.xl{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:var(--green)}
-.chart-card canvas{width:100%!important}
+  /* Contact */
+  .contact-section { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 4rem; padding-bottom: 4rem; }
+  .contact-info h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .contact-info p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+  .contact-links a { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--gold); }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  input, textarea { width: 100%; background: var(--bg-card); border: 1px solid var(--border); padding: 0.8rem; border-radius: 6px; color: var(--text-main); font-family: inherit; }
+  textarea { height: 120px; resize: none; }
+  .quick-response { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;}
+  .quick-response h3 { font-size: 1.2rem; margin: 1rem 0 0.5rem; }
+  .quick-response p { font-size: 0.85rem; color: var(--text-muted); }
+  .quick-response .time { color: var(--gold); font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem; }
 
-/* ══════════════════════════════
-   SERVICES
-══════════════════════════════ */
-.svcs-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);
-  gap:1.2rem;margin-top:3rem;
-}
-.svc{
-  background:rgba(10,22,40,0.7);
-  border:1px solid rgba(29,106,245,0.1);
-  border-radius:14px;padding:1.8rem;
-  position:relative;overflow:hidden;
-  transition:transform .3s,border-color .3s,box-shadow .3s;
-}
-.svc-glow{
-  position:absolute;top:-60px;right:-60px;
-  width:160px;height:160px;border-radius:50%;
-  filter:blur(50px);opacity:.35;pointer-events:none;
-}
-.svc:hover{
-  transform:translateY(-6px) scale(1.01);
-  border-color:rgba(0,212,255,0.3);
-  box-shadow:0 24px 70px rgba(0,0,0,0.45),0 0 40px rgba(0,212,255,0.05);
-}
-.svc-num{
-  font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;
-  color:rgba(0,212,255,0.3);letter-spacing:.12em;margin-bottom:1rem;
-}
-.svc-ico{font-size:2rem;margin-bottom:1rem;display:block}
-.svc h3{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.7rem;letter-spacing:.02em}
-.svc p{font-size:.83rem;color:var(--muted);line-height:1.65;margin-bottom:1.2rem}
-.tags{display:flex;flex-wrap:wrap;gap:.35rem}
-.tag{font-size:.65rem;font-weight:600;padding:.2rem .6rem;border-radius:20px;
-  background:rgba(0,212,255,0.07);color:var(--cyan);border:1px solid rgba(0,212,255,0.15)}
-
-/* ══════════════════════════════
-   WHY SECTION — 4D DEPTH PANEL
-══════════════════════════════ */
-.why-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:5rem;align-items:center;
-}
-.why-items{display:flex;flex-direction:column;gap:1.6rem;margin-top:2rem}
-.wi{display:flex;gap:1rem;align-items:flex-start}
-.wi-icon{
-  width:42px;height:42px;border-radius:10px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
-  background:rgba(29,106,245,0.1);border:1px solid rgba(29,106,245,0.2);
-}
-.wi h4{font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:.3rem}
-.wi p{font-size:.8rem;color:var(--muted);line-height:1.6}
-
-/* Alteryx pipeline animation */
-.pipeline{
-  perspective:1000px;
-}
-.pipe-inner{
-  background:rgba(10,22,40,0.9);
-  border:1px solid rgba(139,92,246,0.2);
-  border-radius:18px;padding:1.6rem;
-  transform:rotateY(12deg) rotateX(-4deg) rotateZ(1deg);
-  box-shadow:
-    -20px 20px 70px rgba(0,0,0,0.5),
-    0 0 40px rgba(139,92,246,0.08);
-  transition:transform .4s;
-  animation:floatPipe 8s ease-in-out infinite;
-}
-@keyframes floatPipe{
-  0%,100%{transform:rotateY(12deg) rotateX(-4deg) rotateZ(1deg) translateY(0)}
-  50%{transform:rotateY(10deg) rotateX(-3deg) rotateZ(.5deg) translateY(-12px)}
-}
-.pipe-inner:hover{animation:none;transform:rotateY(4deg) rotateX(-1deg) rotateZ(0)}
-.pipe-title{font-size:.7rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:1rem;font-weight:700}
-.pipe-step{
-  display:flex;align-items:center;gap:.8rem;
-  padding:.7rem;border-radius:8px;margin-bottom:.5rem;
-  background:rgba(29,106,245,0.06);
-  border:1px solid rgba(29,106,245,0.1);
-  font-size:.76rem;color:var(--white);
-  position:relative;overflow:hidden;
-}
-.pipe-step::after{
-  content:'';position:absolute;left:0;top:0;bottom:0;
-  background:linear-gradient(90deg,rgba(0,212,255,.08),transparent);
-  animation:sweep 3s ease-in-out infinite;
-}
-@keyframes sweep{0%{width:0;opacity:0}50%{width:100%;opacity:1}100%{width:100%;opacity:0}}
-.pipe-step:nth-child(2)::after{animation-delay:.5s}
-.pipe-step:nth-child(3)::after{animation-delay:1s}
-.pipe-step:nth-child(4)::after{animation-delay:1.5s}
-.pipe-step:nth-child(5)::after{animation-delay:2s}
-.ps-icon{font-size:1rem;z-index:1;position:relative}
-.ps-text{z-index:1;position:relative}
-.ps-status{
-  margin-left:auto;font-size:.6rem;font-weight:700;
-  padding:.15rem .5rem;border-radius:10px;z-index:1;position:relative;
-}
-.done{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
-.run{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);animation:blink .8s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-.pipe-mini-chart{margin-top:.8rem;border-radius:8px;overflow:hidden;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.1);padding:.5rem}
-.pipe-mini-chart canvas{max-height:70px}
-
-/* ══════════════════════════════
-   PROCESS
-══════════════════════════════ */
-.proc-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:1.2rem;margin-top:3.5rem;
-  position:relative;
-}
-.proc-grid::before{
-  content:'';position:absolute;
-  top:30px;left:12%;right:12%;height:1px;
-  background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),var(--violet),transparent);
-}
-.proc{
-  background:rgba(10,22,40,0.7);
-  border:1px solid rgba(29,106,245,0.1);
-  border-radius:12px;padding:1.6rem 1.3rem;
-  text-align:center;position:relative;z-index:1;
-  transition:transform .25s,box-shadow .25s;
-}
-.proc:hover{transform:translateY(-5px);box-shadow:0 16px 50px rgba(0,212,255,0.08)}
-.proc-n{
-  width:60px;height:60px;border-radius:50%;
-  background:linear-gradient(135deg,var(--blue),var(--violet));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Orbitron',monospace;font-weight:900;font-size:.95rem;color:#fff;
-  margin:0 auto 1.2rem;
-  box-shadow:0 0 30px rgba(29,106,245,0.35);
-}
-.proc h4{font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
-.proc p{font-size:.76rem;color:var(--muted);line-height:1.55}
-
-/* ══════════════════════════════
-   TOOLS BANNER
-══════════════════════════════ */
-.tools-row{
-  display:flex;gap:1.2rem;justify-content:center;
-  flex-wrap:wrap;margin-top:3rem;
-}
-.tool{
-  display:flex;align-items:center;gap:.9rem;
-  background:rgba(10,22,40,0.8);
-  border:1px solid rgba(29,106,245,0.14);
-  border-radius:12px;padding:1rem 1.6rem;
-  transition:transform .2s,border-color .2s,box-shadow .2s;
-  backdrop-filter:blur(12px);min-width:160px;
-}
-.tool:hover{
-  transform:translateY(-4px);
-  border-color:rgba(0,212,255,0.35);
-  box-shadow:0 12px 40px rgba(0,212,255,0.08);
-}
-.t-ico{font-size:1.8rem}
-.t-name{font-family:'Orbitron',monospace;font-weight:700;font-size:.82rem;color:var(--white)}
-.t-sub{font-size:.65rem;color:var(--muted);margin-top:.1rem}
-
-/* ══════════════════════════════
-   TESTIMONIALS
-══════════════════════════════ */
-.testi-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:1.2rem;margin-top:3rem;
-}
-.tcard{
-  background:rgba(10,22,40,0.75);
-  border:1px solid rgba(29,106,245,0.12);
-  border-radius:14px;padding:1.7rem;
-  backdrop-filter:blur(10px);
-  transition:transform .25s,box-shadow .25s;
-}
-.tcard:hover{transform:translateY(-4px);box-shadow:0 16px 50px rgba(0,0,0,0.4)}
-.stars{color:var(--gold);letter-spacing:3px;font-size:.8rem;margin-bottom:1rem}
-.tcard blockquote{font-size:.85rem;color:#c0cfe8;line-height:1.7;margin-bottom:1.2rem;font-style:italic}
-.tauth{display:flex;align-items:center;gap:.8rem}
-.av{
-  width:36px;height:36px;border-radius:50%;
-  background:linear-gradient(135deg,var(--blue),var(--cyan));
-  display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:.8rem;color:#fff;
-}
-.an{font-size:.82rem;font-weight:700;color:var(--white)}
-.ar{font-size:.7rem;color:var(--muted)}
-
-/* ══════════════════════════════
-   CONTACT
-══════════════════════════════ */
-#contact{
-  padding:7rem 5%;text-align:center;
-  background:
-    radial-gradient(ellipse at 20% 50%,rgba(29,106,245,0.06) 0%,transparent 60%),
-    radial-gradient(ellipse at 80% 50%,rgba(139,92,246,0.06) 0%,transparent 60%);
-}
-.contact-wrap{max-width:580px;margin:2.5rem auto 0}
-.cform{display:flex;flex-direction:column;gap:.9rem}
-.crow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
-.ci{
-  background:rgba(10,22,40,0.85);
-  border:1px solid rgba(0,212,255,0.15);
-  border-radius:8px;padding:.85rem 1rem;
-  color:var(--white);font-family:'Space Grotesk',sans-serif;
-  font-size:.88rem;outline:none;transition:border-color .2s;width:100%;
-}
-.ci::placeholder{color:var(--muted)}
-.ci:focus{border-color:var(--cyan)}
-textarea.ci{resize:vertical;min-height:110px}
-.csub{
-  background:linear-gradient(135deg,var(--blue),var(--cyan));
-  color:#fff;border:none;padding:.9rem 2rem;border-radius:8px;
-  font-size:.92rem;font-weight:700;cursor:pointer;
-  font-family:'Space Grotesk',sans-serif;letter-spacing:.03em;
-  box-shadow:0 0 30px rgba(0,212,255,0.2);
-  transition:opacity .2s,transform .15s;
-}
-.csub:hover{opacity:.88;transform:translateY(-1px)}
-#fsuccess{
-  display:none;color:var(--green);font-size:.88rem;
-  margin-top:.8rem;text-align:center;
-}
-
-/* FOOTER */
-footer{
-  padding:2rem 5%;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:1rem;
-  border-top:1px solid rgba(0,212,255,0.06);
-  background:rgba(2,4,10,.95);
-}
-footer p{font-size:.75rem;color:var(--muted)}
-.fl{display:flex;gap:1.5rem}
-.fl a{font-size:.75rem;color:var(--muted);text-decoration:none;transition:color .2s}
-.fl a:hover{color:var(--cyan)}
-
-/* DIVIDER */
-.hdiv{height:1px;margin:0 5%;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.15),transparent)}
-
-/* REVEAL */
-.rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
-.rv.vis{opacity:1;transform:none}
-
-@media(max-width:960px){
-  .hero{grid-template-columns:1fr;padding-top:6rem}
-  .hero-dash{display:none}
-  .hero-stats{grid-template-columns:repeat(2,1fr)}
-  .why-grid{grid-template-columns:1fr}
-  .proc-grid{grid-template-columns:1fr 1fr}
-  .proc-grid::before{display:none}
-  .testi-grid{grid-template-columns:1fr}
-  .charts-grid{grid-template-columns:1fr}
-  .chart-card.wide{grid-column:span 1}
-  .svcs-grid{grid-template-columns:1fr}
-  .crow{grid-template-columns:1fr}
-  .nav-links{display:none}
-}
-</style>
-
-<style id='ai_nodes'>
-body:after{
-content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-background:
-radial-gradient(circle at 15% 20%,rgba(107,122,61,.25),transparent 20%),
-radial-gradient(circle at 80% 25%,rgba(181,154,82,.22),transparent 22%),
-radial-gradient(circle at 50% 75%,rgba(195,176,145,.25),transparent 25%);
-filter:blur(40px);
-animation:aurora 12s ease-in-out infinite alternate;
-}
-@keyframes aurora{
-from{transform:scale(1) translateY(0)}
-to{transform:scale(1.15) translateY(-20px)}
-}
-.ai-node{
-position:fixed;width:8px;height:8px;border-radius:50%;
-background:#b59a52;box-shadow:0 0 20px #b59a52;
-animation:float 10s linear infinite;
-}
-@keyframes float{from{transform:translateY(100vh)}to{transform:translateY(-100px)}}
+  footer { display: flex; justify-content: space-between; padding: 2rem 5%; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted); }
 </style>
 </head>
 <body>
 
-<canvas id="bg"></canvas>
-
 <nav>
-  <div class="logo">Insight<em>Grid</em></div>
+  <div class="logo">
+    <img src="https://via.placeholder.com/30x30/dfa640/000?text=IG" alt="Logo" style="border-radius:4px;"/>
+    <div>INSIGHTGRID<br/><span>Analytics & Automation</span></div>
+  </div>
   <ul class="nav-links">
-    <li><a href="#charts">Live Charts</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#why">About</a></li>
-    <li><a href="#process">Process</a></li>
-    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#" class="active">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Dashboard Gallery</a></li>
+    <li><a href="#">Workflows</a></li>
+    <li><a href="#">Testimonials</a></li>
+    <li><a href="#">Contact</a></li>
   </ul>
-  <a href="#contact" class="nav-cta">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 011 2.22 2 2 0 012.96 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-    Get a Quote
-  </a>
+  <button class="btn-gold">Let's Connect &gt;</button>
 </nav>
 
-<div class="page">
-
-<!-- ══ HERO ══ -->
-<section class="hero">
-  <div class="hero-left">
-    <div class="badge-row">
-      <span class="badge badge-top">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Top Rated — Upwork
-      </span>
-      <a href="https://www.upwork.com/freelancers/~01ffc14048ab099f30" target="_blank" class="badge badge-upwork">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.56 13.16c-1.1 0-2.13-.47-3.07-1.23l.23-1.08.01-.04c.2-1.14.85-3.06 2.84-3.06 1.49 0 2.7 1.21 2.7 2.7s-1.21 2.71-2.71 2.71zm0-8.14c-2.54 0-4.51 1.65-5.31 4.37-1.22-1.83-2.15-4.04-2.69-5.89H7.83v7.11a2.55 2.55 0 01-5.09 0V3.49H0v7.11a5.28 5.28 0 005.28 5.3 5.28 5.28 0 005.28-5.3V9.41c.53 1.11 1.18 2.23 1.97 3.22l-1.67 7.87h2.8l1.21-5.71c1.06.68 2.29 1.11 3.69 1.11 3 0 5.44-2.45 5.44-5.45s-2.44-5.43-5.44-5.43z"/></svg>
-        View Upwork Profile
-      </a>
-    </div>
-
-    <h1>Data That<br/><span class="g">Thinks, Moves<br/>&amp; Decides</span></h1>
-    <p class="hero-sub">Power BI · Tableau · Alteryx · Excel — end-to-end analytics and automation that transform raw numbers into competitive advantage.</p>
-    <p class="hero-name">Led by <span>Usama Shafiq</span> · InsightGrid Analytics &amp; Automation</p>
-
-    <div class="hero-btns">
-      <a href="#contact" class="btn-prime">Start a Project →</a>
-      <a href="#charts" class="btn-sec">See Live Dashboards</a>
-    </div>
-
-    <div class="hero-stats">
-      <div class="stat"><div class="sv">150+</div><div class="sl">Projects Done</div></div>
-      <div class="stat"><div class="sv">100%</div><div class="sl">Satisfaction</div></div>
-      <div class="stat"><div class="sv">5.0★</div><div class="sl">Upwork Rating</div></div>
-      <div class="stat"><div class="sv">Top Rated</div><div class="sl">Badge</div></div>
-    </div>
-  </div>
-
-  <!-- Live mini dashboard in hero -->
-  <div class="hero-dash rv">
-    <div class="dash-tilt">
-      <div class="dtbar">
-        <div class="dtdot" style="background:#ef4444"></div>
-        <div class="dtdot" style="background:#f59e0b"></div>
-        <div class="dtdot" style="background:#10b981"></div>
-        <span class="dttitle">INSIGHTGRID · LIVE DASHBOARD</span>
-        <div class="live-dot"></div>
-      </div>
-      <div class="kpis">
-        <div class="kpi"><div class="kv" style="color:var(--cyan)">$3.8M</div><div class="kl">Revenue</div><div class="kt up">↑ 23.4%</div></div>
-        <div class="kpi"><div class="kv" style="color:#10b981">2,841</div><div class="kl">Active Users</div><div class="kt up">↑ 11.2%</div></div>
-        <div class="kpi"><div class="kv" style="color:var(--violet)">94.7%</div><div class="kl">Efficiency</div><div class="kt up">↑ 6.1%</div></div>
-      </div>
-      <div class="chart-mini"><canvas id="heroLine"></canvas></div>
-      <div class="chart-row2">
-        <div class="chart-mini2"><canvas id="heroBar"></canvas></div>
-        <div class="chart-mini2"><canvas id="heroDough"></canvas></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="hdiv"></div>
-
-<!-- ══ TOOLS ══ -->
-<section class="sec rv" id="tools">
-  <div style="text-align:center">
-    <div class="sec-hl">Our Arsenal</div>
-    <h2 class="sec-h" style="text-align:center">Four Tools.<br/>Infinite Possibilities.</h2>
-  </div>
-  <div class="tools-row">
-    <div class="tool rv"><span class="t-ico">📊</span><div><div class="t-name">Power BI</div><div class="t-sub">Dashboards &amp; DAX</div></div></div>
-    <div class="tool rv"><span class="t-ico">📈</span><div><div class="t-name">Tableau</div><div class="t-sub">Visual Analytics</div></div></div>
-    <div class="tool rv"><span class="t-ico">⚙️</span><div><div class="t-name">Alteryx</div><div class="t-sub">ETL Automation</div></div></div>
-    <div class="tool rv"><span class="t-ico">📋</span><div><div class="t-name">Excel / VBA</div><div class="t-sub">Models &amp; Macros</div></div></div>
-  </div>
-</section>
-
-<div class="hdiv"></div>
-
-<!-- ══ LIVE CHARTS SHOWCASE ══ -->
-<section class="sec charts-sec" id="charts">
-  <div class="charts-header rv">
-    <div class="sec-hl">Visual Samples</div>
-    <h2 class="sec-h">Real Dashboards.<br/>Real Insights.</h2>
-    <p class="sec-p">Every chart below represents the kind of work we deliver — interactive, animated, and built to answer your exact business questions.</p>
-  </div>
-  <div class="charts-grid">
-
-    <!-- Revenue Trend -->
-    <div class="chart-card rv">
-      <div class="cc-head">
-        <span class="cc-title">📊 Revenue Trend — Power BI Style</span>
-        <span class="cc-badge pbi">POWER BI</span>
-      </div>
-      <canvas id="c1" height="140"></canvas>
-    </div>
-
-    <!-- Regional Sales -->
-    <div class="chart-card rv">
-      <div class="cc-head">
-        <span class="cc-title">🌍 Regional Sales Breakdown</span>
-        <span class="cc-badge tab">TABLEAU</span>
-      </div>
-      <canvas id="c2" height="140"></canvas>
-    </div>
-
-    <!-- ETL Volume — wide -->
-    <div class="chart-card wide rv">
-      <div class="cc-head">
-        <span class="cc-title">⚙️ ETL Pipeline Volume — 12 Month Processing</span>
-        <span class="cc-badge alx">ALTERYX</span>
-      </div>
-      <canvas id="c3" height="120"></canvas>
-    </div>
-
-    <!-- Product Mix Donut -->
-    <div class="chart-card rv">
-      <div class="cc-head">
-        <span class="cc-title">🥧 Product Mix Distribution</span>
-        <span class="cc-badge tab">TABLEAU</span>
-      </div>
-      <canvas id="c4" height="140"></canvas>
-    </div>
-
-    <!-- KPI Gauges / Excel -->
-    <div class="chart-card rv">
-      <div class="cc-head">
-        <span class="cc-title">📋 KPI Scorecard — Excel Model</span>
-        <span class="cc-badge xl">EXCEL</span>
-      </div>
-      <canvas id="c5" height="140"></canvas>
-    </div>
-
-  </div>
-</section>
-
-<div class="hdiv"></div>
-
-<!-- ══ SERVICES ══ -->
-<section class="sec" id="services">
-  <div class="rv">
-    <div class="sec-hl">Services</div>
-    <h2 class="sec-h">What We Build<br/>for You</h2>
-    <p class="sec-p">From a single KPI dashboard to a full data automation ecosystem — we deliver exactly what your business needs.</p>
-  </div>
-  <div class="svcs-grid">
-    <div class="svc rv">
-      <div class="svc-glow" style="background:rgba(243,154,30,.8)"></div>
-      <div class="svc-num">SVC-01</div>
-      <span class="svc-ico">📊</span>
-      <h3>Power BI Dashboards</h3>
-      <p>Interactive drill-through reports with advanced DAX measures, Row-Level Security, composite models, and live connections to SQL Server, SharePoint, or Azure.</p>
-      <div class="tags"><span class="tag">DAX</span><span class="tag">Data Modelling</span><span class="tag">RLS</span><span class="tag">Power Query</span><span class="tag">Azure</span></div>
-    </div>
-    <div class="svc rv">
-      <div class="svc-glow" style="background:rgba(0,212,255,.7)"></div>
-      <div class="svc-num">SVC-02</div>
-      <span class="svc-ico">📈</span>
-      <h3>Tableau Visualizations</h3>
-      <p>Compelling Tableau workbooks with LOD expressions, custom calculations, Parameter actions, and dashboards published to Tableau Server or Tableau Cloud.</p>
-      <div class="tags"><span class="tag">LOD</span><span class="tag">Tableau Prep</span><span class="tag">Cloud Publish</span><span class="tag">Actions</span></div>
-    </div>
-    <div class="svc rv">
-      <div class="svc-glow" style="background:rgba(139,92,246,.8)"></div>
-      <div class="svc-num">SVC-03</div>
-      <span class="svc-ico">⚙️</span>
-      <h3>Alteryx Automation</h3>
-      <p>End-to-end ETL workflows that automate data ingestion, cleansing, blending, and output. What took 2 days manually now runs in 10 minutes on a schedule.</p>
-      <div class="tags"><span class="tag">ETL</span><span class="tag">Blending</span><span class="tag">Macros</span><span class="tag">Scheduling</span><span class="tag">API Calls</span></div>
-    </div>
-    <div class="svc rv">
-      <div class="svc-glow" style="background:rgba(16,185,129,.7)"></div>
-      <div class="svc-num">SVC-04</div>
-      <span class="svc-ico">📋</span>
-      <h3>Excel / VBA Solutions</h3>
-      <p>Advanced financial models, dynamic reporting templates, and VBA macros that automate the entire reporting cycle — from raw data import to formatted output.</p>
-      <div class="tags"><span class="tag">VBA</span><span class="tag">Power Query</span><span class="tag">Dynamic Arrays</span><span class="tag">Templates</span><span class="tag">Pivot</span></div>
-    </div>
-  </div>
-</section>
-
-<div class="hdiv"></div>
-
-<!-- ══ WHY / PIPELINE ══ -->
-<section class="sec" id="why">
-  <div class="why-grid">
+<div class="container">
+  <section class="hero">
     <div>
-      <div class="sec-hl rv">Why InsightGrid</div>
-      <h2 class="sec-h rv">Built Different.<br/>Proven Results.</h2>
-      <div class="why-items">
-        <div class="wi rv"><div class="wi-icon">🎯</div><div><h4>Business-first thinking</h4><p>Every visualization is designed around a decision you need to make — not just data you have.</p></div></div>
-        <div class="wi rv"><div class="wi-icon">⚡</div><div><h4>On-time, every time</h4><p>150+ projects delivered with a 100% on-time record. Daily updates keep you in the loop.</p></div></div>
-        <div class="wi rv"><div class="wi-icon">📦</div><div><h4>Full ownership & docs</h4><p>You get every file, full documentation, and a live walkthrough so your team stays self-sufficient.</p></div></div>
-        <div class="wi rv"><div class="wi-icon">🔄</div><div><h4>Post-delivery support</h4><p>We don't disappear after handover. Updates, revisions, and questions are always handled swiftly.</p></div></div>
+      <div class="badges">
+        <span class="badge">★ TOP RATED PLUS</span>
+        <span class="badge">Upwork</span>
+      </div>
+      <h1>Turning Data Into<br/>Intelligence.<br/>Powering Decisions.</h1>
+      <p>Specialized in Power BI, Tableau, Alteryx & Excel automation to help businesses unlock insights, streamline operations, and drive measurable growth.</p>
+      <div class="hero-author">Usama Shafiq</div>
+      <div class="hero-title">CEO of IGAA (InsightGrid Analytics and Automation)</div>
+      
+      <div class="hero-btns">
+        <button class="btn-gold">View My Work &rarr;</button>
+        <button class="btn-outline"><span style="color:#14a800;font-weight:bold;">up</span> Hire Me on Upwork</button>
+        <button class="btn-outline"><span style="color:#0a66c2;font-weight:bold;">in</span> LinkedIn Profile</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><h3>100+</h3><p>Successful Projects</p></div>
+        <div class="stat"><h3>90+</h3><p>Happy Clients</p></div>
+        <div class="stat"><h3>🏆</h3><p>Top Rated Plus</p></div>
+        <div class="stat"><h3>2,500+</h3><p>Hours Worked</p></div>
       </div>
     </div>
-
-    <!-- 4D Alteryx Pipeline Mock -->
-    <div class="pipeline rv">
-      <div class="pipe-inner">
-        <div class="pipe-title">// ALTERYX · ETL WORKFLOW · LIVE</div>
-        <div class="pipe-step"><span class="ps-icon">📥</span><span class="ps-text">Ingest Raw CSV / SQL Source</span><span class="ps-status done">✓ DONE</span></div>
-        <div class="pipe-step"><span class="ps-icon">🔍</span><span class="ps-text">Data Profiling &amp; Validation</span><span class="ps-status done">✓ DONE</span></div>
-        <div class="pipe-step"><span class="ps-icon">🧹</span><span class="ps-text">Cleanse &amp; Standardize Fields</span><span class="ps-status done">✓ DONE</span></div>
-        <div class="pipe-step"><span class="ps-icon">🔗</span><span class="ps-text">Blend &amp; Join Data Sources</span><span class="ps-status run">⟳ RUNNING</span></div>
-        <div class="pipe-step"><span class="ps-icon">📤</span><span class="ps-text">Output to Power BI / Tableau</span><span class="ps-status" style="background:rgba(74,96,128,0.15);color:var(--muted);border:1px solid var(--dim)">PENDING</span></div>
-        <div class="pipe-mini-chart"><canvas id="pipeChart"></canvas></div>
+    <div class="hero-right">
+      <!-- Placeholder for the AI head background -->
+      <div style="height: 500px; background: radial-gradient(circle, #2a2d2a, #0c0f0d); border-radius: 20px;"></div>
+      <div class="analytics-panel">
+        <h4>Analytics • Automation • AI</h4>
+        <ul>
+          <li>Data Integration</li>
+          <li>Advanced Analytics</li>
+          <li>Dashboarding</li>
+          <li>Process Automation</li>
+          <li>AI-Powered Insights</li>
+        </ul>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<div class="hdiv"></div>
-
-<!-- ══ PROCESS ══ -->
-<section class="sec" id="process" style="text-align:center">
-  <div class="rv">
-    <div class="sec-hl">Process</div>
-    <h2 class="sec-h">Brief to Dashboard<br/>in 4 Steps</h2>
+  <div class="section-title">Solutions That Drive Impact</div>
+  <div class="solutions-grid">
+    <div class="sol-card"><h4><span style="color:#f2c811">📊</span> Power BI</h4><p>Interactive dashboards and insightful reports for better decisions.</p></div>
+    <div class="sol-card"><h4><span style="color:#e97627">✨</span> Tableau</h4><p>Beautiful visualizations and storytelling that drive business value.</p></div>
+    <div class="sol-card"><h4><span style="color:#206a97">a</span> Alteryx</h4><p>Powerful data preparation, blending & workflow automation.</p></div>
+    <div class="sol-card"><h4><span style="color:#217346">x</span> Excel Automation</h4><p>Smart templates, automations & advanced data solutions.</p></div>
+    <div class="sol-card"><h4><span style="color:var(--gold)">🧠</span> AI & Analytics</h4><p>AI-powered analytics for predictive insights and smarter strategies.</p></div>
   </div>
-  <div class="proc-grid">
-    <div class="proc rv"><div class="proc-n">01</div><h4>Discovery</h4><p>We understand your data sources, decisions, and goals before touching a single tool.</p></div>
-    <div class="proc rv"><div class="proc-n">02</div><h4>Audit &amp; Plan</h4><p>Data quality assessment, tool selection, and a clear project plan with milestones.</p></div>
-    <div class="proc rv"><div class="proc-n">03</div><h4>Build &amp; Review</h4><p>Regular previews and fast iteration cycles until the output matches your vision exactly.</p></div>
-    <div class="proc rv"><div class="proc-n">04</div><h4>Handover</h4><p>Full delivery with files, documentation, and a live walkthrough session.</p></div>
-  </div>
-</section>
 
-<div class="hdiv"></div>
-
-<!-- ══ TESTIMONIALS ══ -->
-<section class="sec" id="testimonials">
-  <div class="rv">
-    <div class="sec-hl">Reviews</div>
-    <h2 class="sec-h">Clients Across<br/>the Globe</h2>
+  <div class="section-title">Dashboard Gallery</div>
+  <div class="gallery-tabs">
+    <button class="tab active">Power BI</button>
+    <button class="tab">Tableau</button>
+    <button class="tab">Excel Dashboards</button>
   </div>
-   <div class="testi-grid">
-    <div class="tcard rv">
-      <div class="stars">★★★★★</div>
-      <blockquote>"Alteryx workflows were designed to integrate multiple Salesforce objects and fully automate reporting into Tableau via Alteryx Server. The resulting dashboards provide real-time insights across Order Management, Fulfillment, Collections, CFR, and CRM, reducing manual effort and reporting errors."</blockquote>
-      <div class="tauth"><div class="av">SM</div><div><div class="an">Private</div><div class="ar">Global Head OTC, USA</div></div></div>
+  <div class="gallery-grid">
+    <div class="dash-card"><div class="dash-title">Sales Performance Dashboard</div><img src="https://via.placeholder.com/400x250/222/555?text=Dashboard+1" alt="Dash"/></div>
+    <div class="dash-card"><div class="dash-title">Executive Summary Dashboard</div><img src="https://via.placeholder.com/400x250/222/555?text=Dashboard+2" alt="Dash"/></div>
+    <div class="dash-card"><div class="dash-title">Financial Overview Dashboard</div><img src="https://via.placeholder.com/400x250/222/555?text=Dashboard+3" alt="Dash"/></div>
+  </div>
+
+  <div class="section-title">Alteryx Workflows</div>
+  <div class="workflow-grid">
+    <div class="wf-card"><h4>Sales Performance Workflow</h4><img src="https://via.placeholder.com/300x100/fff/333?text=Workflow" alt="WF"/><p>Sales Data Pipeline</p></div>
+    <div class="wf-card"><h4>Executive Summary Workflow</h4><img src="https://via.placeholder.com/300x100/fff/333?text=Workflow" alt="WF"/><p>Customer Analytics Workflow</p></div>
+    <div class="wf-card"><h4>Data Cleansing Workflow</h4><img src="https://via.placeholder.com/300x100/fff/333?text=Workflow" alt="WF"/><p>Data Cleansing & Validation</p></div>
+    <div class="wf-card"><h4>Automated Reporting Workflow</h4><img src="https://via.placeholder.com/300x100/fff/333?text=Workflow" alt="WF"/><p>Automated Reporting Workflow</p></div>
+  </div>
+  <div class="btn-center"><button class="btn-outline">View More Workflows &rarr;</button></div>
+
+  <div class="section-title">Client Testimonials</div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div style="display:flex; justify-content:space-between;"><span style="color:var(--gold); font-size:2rem; line-height:1;">“</span><span class="stars">★★★★★</span></div>
+      <p>Usama is exceptional in Power BI and Alteryx. He delivered exactly what we needed with great efficiency and professionalism.</p>
+      <div class="client-info"><img src="https://via.placeholder.com/40" alt="Client"/><div><h5>Nicolas C.</h5><span>CEO, Real Estate Company</span></div></div>
     </div>
-    <div class="tcard rv">
-      <div class="stars">★★★★★</div>
-      <blockquote>"The Power BI dashboard Usama built replaced multiple Salesforce CPQ reports and removed heavy manual work, saving significant time and effort for our team. With his ACCA and finance background, he also quickly understood and supported complex tax reporting logic, making finance reporting seamless and reliable."</blockquote>
-      <div class="tauth"><div class="av">SM</div><div><div class="an">Sarah M.</div><div class="ar">CFO, USA</div></div></div>
+    <div class="testi-card">
+      <div style="display:flex; justify-content:space-between;"><span style="color:var(--gold); font-size:2rem; line-height:1;">“</span><span class="stars">★★★★★</span></div>
+      <p>Fantastic experience working with Usama. His dashboards are insightful and his communication is top-notch.</p>
+      <div class="client-info"><img src="https://via.placeholder.com/40" alt="Client"/><div><h5>Abdullah A.</h5><span>Operations Manager</span></div></div>
     </div>
-    <div class="tcard rv">
-      <div class="stars">★★★★★</div>
-      <blockquote>"Great expert in Excel and data visualization, also a hard working man. Highly recommended."</blockquote>
-      <div class="tauth"><div class="av">SM</div><div><div class="an">Mohammad Obaid</div><div class="ar">Jordan</div></div></div>
-    </div>
-    <div class="tcard rv">
-      <div class="stars">★★★★★</div>
-      <blockquote>"It was great working with you over the years. Thanks for the great support. Much appreciated"</blockquote>
-      <div class="tauth"><div class="av">SM</div><div><div class="an">Kenath</div><div class="ar">USA</div></div></div>
-    </div>
-    <div class="tcard rv">
-      <div class="stars">★★★★★</div>
-      <blockquote>"Incredible Alteryx automation. A 2-day monthly process now runs in 10 minutes. InsightGrid completely transformed our operations team's efficiency."</blockquote>
-      <div class="tauth"><div class="av">AK</div><div><div class="an">Ahmed K.</div><div class="ar">Operations Lead · UAE</div></div></div>
-    </div>
-    <div class="tcard rv">
-      <div class="stars">★★★★★</div>
-      <blockquote>"Tableau dashboards delivered on time, zero revisions needed. Usama understood our requirements better than anyone we've worked with — highly recommended."</blockquote>
-      <div class="tauth"><div class="av">JL</div><div><div class="an">James L.</div><div class="ar">Head of Analytics · UK</div></div></div>
+    <div class="testi-card">
+      <div style="display:flex; justify-content:space-between;"><span style="color:var(--gold); font-size:2rem; line-height:1;">“</span><span class="stars">★★★★★</span></div>
+      <p>Highly skilled and reliable professional. He automated our reporting process and saved us hundreds of hours.</p>
+      <div class="client-info"><img src="https://via.placeholder.com/40" alt="Client"/><div><h5>Peter H.</h5><span>Finance Director</span></div></div>
     </div>
   </div>
-</section>
 
-<div class="hdiv"></div>
-
-<!-- ══ CONTACT ══ -->
-<section id="contact" class="rv">
-  <div class="sec-hl" style="display:block;text-align:center">Contact</div>
-  <h2 class="sec-h" style="text-align:center">Let's Transform<br/>Your Data</h2>
-  <p style="text-align:center;color:var(--muted);font-size:.92rem;max-width:440px;margin:.5rem auto 0;line-height:1.7">Tell us about your project — we'll respond within 24 hours with a tailored plan and quote.</p>
-  <div class="contact-wrap">
-    <form class="cform" action="https://formspree.io/f/mqevedjk" method="POST">
-      <div class="crow">
-        <input type="text" class="ci" placeholder="Your Name" required/>
-        <input type="email" class="ci" placeholder="Email Address" required/>
+  <div class="contact-section">
+    <div>
+      <div class="contact-info">
+        <h2>Let's Work Together</h2>
+        <p>Have a project in mind? Let's discuss how I can help you turn your data into powerful insights.</p>
+        <div class="contact-links">
+          <a href="mailto:Usama.hhc@hotmail.com">📧 Usama.hhc@hotmail.com</a>
+          <a href="#">🔗 linkedin.com/in/muhammad-usama-shafiq</a>
+        </div>
       </div>
-      <select class="ci">
-        <option value="" disabled selected>Select Service</option>
-        <option>Power BI Dashboard</option>
-        <option>Tableau Visualization</option>
-        <option>Alteryx Automation</option>
-        <option>Excel </option>
-        <option>Multiple Services</option>
-      </select>
-      <textarea class="ci" placeholder="Describe your project — data sources, goals, and requirements..."></textarea>
-      <button type="submit" class="csub">Send Message →</button>
-      <p id="fsuccess">✓ Message received! Usama will respond within 24 hours.</p>
-    </form>
+      <form class="contact-form">
+        <div class="form-row">
+          <input type="text" placeholder="Your Name" />
+          <input type="email" placeholder="Your Email" />
+        </div>
+        <input type="text" placeholder="Subject" />
+        <textarea placeholder="Your Message"></textarea>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <button type="button" class="btn-gold" style="padding: 0.8rem 2rem;">Send Message &rarr;</button>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">I'll get back to you soon!</span>
+        </div>
+      </form>
+    </div>
+    <div class="quick-response">
+      <div style="font-size:3rem; color:var(--gold);">✉️</div>
+      <h3>Quick Response</h3>
+      <p>I typically reply within</p>
+      <div class="time">24 hours</div>
+    </div>
   </div>
-</section>
+</div>
 
 <footer>
-  <p>© 2025 <strong>InsightGrid Analytics &amp; Automation</strong> · Usama Shafiq · All rights reserved</p>
-  <div class="fl">
-    <a href="https://www.upwork.com/freelancers/~01ffc14048ab099f30" target="_blank">⭐ Upwork Profile</a>
-    <a href="#charts">Live Charts</a>
-    <a href="#services">Services</a>
-    <a href="#contact">Contact</a>
-  </div>
-
-<section id="gallery" class="rv" style="padding:6rem 5%">
-<h2 style="text-align:center">Power BI • Tableau • Alteryx Showcase</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:30px">
-<div class="card"><h3>Power BI Executive Dashboard</h3><p>Replace with your screenshot.</p></div>
-<div class="card"><h3>Tableau Sales Analytics</h3><p>Replace with your screenshot.</p></div>
-<div class="card"><h3>Alteryx Workflow Automation</h3><p>Replace with your workflow screenshot.</p></div>
-</div>
-</section>
+  <div>© 2026 InsightGrid Analytics & Automation — All Rights Reserved.</div>
+  <div>Built with ❤️ by <strong>Usama Shafiq</strong></div>
 </footer>
 
-</div><!-- .page -->
-
-<script>
-/* ════════════════════════════════
-   THREE.JS — 4D HYPER TUNNEL
-════════════════════════════════ */
-(function(){
-  const canvas=document.getElementById('bg');
-  const R=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-  R.setPixelRatio(Math.min(devicePixelRatio,2));
-  R.setSize(innerWidth,innerHeight);
-  const S=new THREE.Scene();
-  const C=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,300);
-  C.position.z=50;
-
-  // Tunnel rings
-  const rings=[];
-  for(let i=0;i<60;i++){
-    const geo=new THREE.TorusGeometry(18+Math.sin(i*.4)*4,.12+Math.random()*.08,8,80);
-    const mat=new THREE.MeshBasicMaterial({
-      color:new THREE.Color().setHSL(.58+i*.004,.9,.4+Math.sin(i*.3)*.15),
-      transparent:true,opacity:.25+Math.sin(i*.25)*.1,wireframe:false
-    });
-    const m=new THREE.Mesh(geo,mat);
-    m.position.z=-i*4;
-    m.rotation.z=i*.15;
-    S.add(m);rings.push(m);
-  }
-
-  // Star field
-  const sc=2400,sp=new Float32Array(sc*3);
-  for(let i=0;i<sc;i++){sp[i*3]=(Math.random()-.5)*300;sp[i*3+1]=(Math.random()-.5)*300;sp[i*3+2]=(Math.random()-.5)*300}
-  const sg=new THREE.BufferGeometry();
-  sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
-  S.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0x88aaff,size:.3,transparent:true,opacity:.5})));
-
-  // Floating data cubes
-  const cubes=[];
-  for(let i=0;i<12;i++){
-    const g=new THREE.BoxGeometry(.8+Math.random()*.8,.8+Math.random()*.8,.8+Math.random()*.8);
-    const m2=new THREE.MeshBasicMaterial({
-      color:new THREE.Color().setHSL([.58,.7,.8][i%3],.8,.5),
-      transparent:true,opacity:.08,wireframe:true
-    });
-    const mesh=new THREE.Mesh(g,m2);
-    mesh.position.set((Math.random()-.5)*50,(Math.random()-.5)*40,(Math.random()-.5)*60);
-    S.add(mesh);cubes.push({mesh,rx:Math.random()*.01,ry:Math.random()*.015});
-  }
-
-  let mx=0,my=0,t=0;
-  document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2});
-  addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
-
-  (function tick(){
-    requestAnimationFrame(tick);t+=.008;
-    C.position.x+=(mx*4-C.position.x)*.03;
-    C.position.y+=(-my*3-C.position.y)*.03;
-    C.lookAt(0,0,-50);
-    rings.forEach((r,i)=>{r.rotation.z+=.002+i*.00005;r.rotation.x=Math.sin(t+i*.1)*.05});
-    cubes.forEach(c=>{c.mesh.rotation.x+=c.rx;c.mesh.rotation.y+=c.ry});
-    R.render(S,C);
-  })();
-})();
-
-/* ════════════════════════════════
-   CHART.JS — ALL CHARTS
-════════════════════════════════ */
-Chart.defaults.color='#4a6080';
-Chart.defaults.font.family="'Space Grotesk',sans-serif";
-Chart.defaults.font.size=10;
-
-const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-// gradient helper
-function grad(ctx,c1,c2){
-  const g=ctx.createLinearGradient(0,0,0,200);
-  g.addColorStop(0,c1);g.addColorStop(1,c2);return g;
-}
-
-// ── HERO MINI CHARTS ──
-new Chart(document.getElementById('heroLine'),{
-  type:'line',
-  data:{labels:months,datasets:[{
-    data:[30,42,38,55,50,68,64,78,72,88,84,96],
-    borderColor:'#00d4ff',borderWidth:2,fill:true,tension:.4,
-    backgroundColor:(ctx)=>grad(ctx.chart.ctx,'rgba(0,212,255,.18)','rgba(0,212,255,0)'),
-    pointRadius:0,
-  }]},
-  options:{responsive:true,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:1800,easing:'easeInOutQuart'}}
-});
-new Chart(document.getElementById('heroBar'),{
-  type:'bar',
-  data:{labels:['Q1','Q2','Q3','Q4'],datasets:[{data:[65,78,55,90],
-    backgroundColor:['rgba(29,106,245,.7)','rgba(0,212,255,.7)','rgba(139,92,246,.7)','rgba(244,114,182,.7)'],
-    borderRadius:4,borderWidth:0}]},
-  options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:1500,easing:'easeOutBounce'}}
-});
-new Chart(document.getElementById('heroDough'),{
-  type:'doughnut',
-  data:{labels:['PBI','Tableau','Alteryx','Excel'],datasets:[{
-    data:[38,28,20,14],
-    backgroundColor:['#1d6af5','#00d4ff','#8b5cf6','#10b981'],
-    borderWidth:0,hoverOffset:4
-  }]},
-  options:{responsive:true,plugins:{legend:{display:false}},cutout:'68%',animation:{duration:1800}}
-});
-
-// ── C1: Revenue Trend (Power BI) ──
-new Chart(document.getElementById('c1'),{
-  type:'line',
-  data:{
-    labels:months,
-    datasets:[
-      {label:'2024',data:[210,230,195,260,240,290,275,320,305,370,355,410],
-        borderColor:'#1d6af5',backgroundColor:'rgba(29,106,245,.08)',
-        fill:true,tension:.4,borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#1d6af5'},
-      {label:'2023',data:[160,175,155,200,185,225,210,250,235,280,265,310],
-        borderColor:'rgba(0,212,255,.4)',backgroundColor:'transparent',
-        fill:false,tension:.4,borderWidth:1.5,pointRadius:2,borderDash:[4,3]}
-    ]
-  },
-  options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:12,padding:10}}},
-    scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>'$'+v+'K'}}},
-    animation:{duration:2000,easing:'easeInOutCubic'}}
-});
-
-// ── C2: Regional (Tableau) ──
-new Chart(document.getElementById('c2'),{
-  type:'bar',
-  data:{
-    labels:['N. America','Europe','Asia','MENA','Africa','LATAM'],
-    datasets:[
-      {label:'Q3 2024',data:[340,285,320,195,110,160],backgroundColor:'rgba(0,212,255,.75)',borderRadius:4,borderWidth:0},
-      {label:'Q4 2024',data:[390,310,375,220,135,185],backgroundColor:'rgba(139,92,246,.75)',borderRadius:4,borderWidth:0}
-    ]
-  },
-  options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:12,padding:10}}},
-    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>'$'+v+'K'}}},
-    animation:{duration:1800}}
-});
-
-// ── C3: ETL Volume wide ──
-new Chart(document.getElementById('c3'),{
-  type:'bar',
-  data:{
-    labels:months,
-    datasets:[
-      {label:'Records Processed (M)',data:[1.2,1.8,1.5,2.3,2.1,2.9,2.6,3.4,3.1,4.0,3.7,4.5],
-        backgroundColor:(ctx)=>{
-          const g=ctx.chart.ctx.createLinearGradient(0,0,0,150);
-          g.addColorStop(0,'rgba(139,92,246,.8)');g.addColorStop(1,'rgba(29,106,245,.3)');return g;
-        },borderRadius:5,borderWidth:0},
-      {label:'Processing Time (hrs)',data:[3.1,4.2,3.5,5.0,4.7,5.8,5.4,6.1,5.7,7.0,6.5,7.8],
-        type:'line',borderColor:'#00d4ff',backgroundColor:'transparent',
-        tension:.4,borderWidth:2,pointRadius:3,pointBackgroundColor:'#00d4ff',yAxisID:'y2'}
-    ]
-  },
-  options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:12,padding:10}}},
-    scales:{
-      x:{grid:{color:'rgba(255,255,255,.04)'}},
-      y:{grid:{color:'rgba(255,255,255,.04)'},position:'left',ticks:{callback:v=>v+'M'}},
-      y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'h'}}
-    },animation:{duration:2000}}
-});
-
-// ── C4: Donut ──
-new Chart(document.getElementById('c4'),{
-  type:'doughnut',
-  data:{
-    labels:['SaaS','Retail','Finance','Healthcare','Manufacturing'],
-    datasets:[{
-      data:[32,24,19,15,10],
-      backgroundColor:['#1d6af5','#00d4ff','#8b5cf6','#f472b6','#10b981'],
-      borderWidth:0,hoverOffset:8
-    }]
-  },
-  options:{responsive:true,cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:10,padding:8}}},animation:{duration:2000,animateRotate:true}}
-});
-
-// ── C5: Radar / KPI Scorecard ──
-new Chart(document.getElementById('c5'),{
-  type:'radar',
-  data:{
-    labels:['Revenue','Margin','Efficiency','Satisfaction','Growth','Retention'],
-    datasets:[
-      {label:'Actual',data:[88,76,94,91,83,87],
-        borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.12)',
-        borderWidth:2,pointBackgroundColor:'#10b981',pointRadius:3},
-      {label:'Target',data:[90,80,90,90,85,90],
-        borderColor:'rgba(0,212,255,.4)',backgroundColor:'rgba(0,212,255,.04)',
-        borderWidth:1.5,borderDash:[4,3],pointRadius:2}
-    ]
-  },
-  options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:8}}},
-    scales:{r:{grid:{color:'rgba(255,255,255,.06)'},angleLines:{color:'rgba(255,255,255,.06)'},
-      ticks:{backdropColor:'transparent',color:'#4a6080'},min:50,max:100}},
-    animation:{duration:1800}}
-});
-
-// ── Pipeline mini ──
-new Chart(document.getElementById('pipeChart'),{
-  type:'line',
-  data:{labels:['00:00','04:00','08:00','12:00','16:00','20:00'],
-    datasets:[{
-      label:'Rows/sec',
-      data:[1200,2800,4500,3900,5600,4200],
-      borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.1)',
-      fill:true,tension:.4,borderWidth:2,pointRadius:0
-    }]
-  },
-  options:{responsive:true,plugins:{legend:{display:false}},
-    scales:{x:{display:false},y:{display:false}},animation:{duration:1500}}
-});
-
-/* ════════════════════════════════
-   SCROLL REVEAL
-════════════════════════════════ */
-const rvEls=document.querySelectorAll('.rv');
-const obs=new IntersectionObserver(e=>{
-  e.forEach(i=>{if(i.isIntersecting){i.target.classList.add('vis');obs.unobserve(i.target)}});
-},{threshold:.08});
-rvEls.forEach(el=>obs.observe(el));
-
-/* FORM */
-function doSubmit(e){
-  e.preventDefault();
-  document.getElementById('fsuccess').style.display='block';
-  e.target.reset();
-}
-</script>
 </body>
 </html>
