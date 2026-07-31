@@ -32,8 +32,8 @@ body{
   overflow-x:hidden;
 }
 
-/* ── CANVAS ── */
-#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+/* ── CANVAS (scoped to .hero — see below) ── */
+#bg{position:fixed;inset:0;z-index:1;pointer-events:none}
 
 /* ── NOISE OVERLAY ── */
 body::before{
@@ -84,7 +84,16 @@ nav{
   grid-template-columns:1fr 1fr;
   align-items:center;gap:3rem;
   padding:7rem 5% 5rem;
+  position:relative;overflow:hidden;
+  /* dark charcoal→black theme, scoped to the hero only */
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 22%,rgba(181,154,82,.16) 0%,transparent 62%),
+    radial-gradient(ellipse 90% 70% at 50% 100%,rgba(107,88,40,.14) 0%,transparent 60%),
+    linear-gradient(180deg,#0a0906 0%,#050403 55%,#020201 100%);
+  --white:#f3eee0;    /* light text override, cascades to all hero children */
+  --muted:#b6ae9a;    /* light muted-gray override */
 }
+.hero-left,.hero-dash{position:relative;z-index:2}
 .badge-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.8rem}
 .badge{
   display:inline-flex;align-items:center;gap:.4rem;
@@ -92,7 +101,7 @@ nav{
   padding:.35rem .85rem;border-radius:20px;
 }
 .badge-top{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:var(--gold)}
-.badge-upwork{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#0c8c62;text-decoration:none;transition:background .2s}
+.badge-upwork{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.35);color:#34d399;text-decoration:none;transition:background .2s}
 .badge-upwork:hover{background:rgba(16,185,129,0.25)}
 .hero h1{
   font-family:'Orbitron',monospace;
@@ -139,8 +148,8 @@ nav{
   gap:1rem;
 }
 .stat{
-  background:rgba(255, 255, 255, 0.6);
-  border:1px solid rgba(181, 154, 82, 0.2);
+  background:rgba(255, 255, 255, 0.05);
+  border:1px solid rgba(226, 184, 108, 0.28);
   border-radius:10px;padding:.9rem;text-align:center;
   backdrop-filter:blur(10px);
   transition:transform .2s;
@@ -154,14 +163,14 @@ nav{
 /* HERO RIGHT — live dashboard */
 .hero-dash{position:relative;perspective:1200px}
 .dash-tilt{
-  background:rgba(255, 255, 255, 0.85);
-  border:1px solid rgba(181, 154, 82, 0.2);
+  background:rgba(16, 14, 10, 0.6);
+  border:1px solid rgba(226, 184, 108, 0.3);
   border-radius:20px;padding:1.4rem;
   transform:rotateY(-14deg) rotateX(5deg) rotateZ(-1deg);
   box-shadow:
-    24px 24px 60px rgba(0,0,0,0.08),
-    0 0 40px rgba(181, 154, 82, 0.1),
-    inset 0 1px 0 rgba(255,255,255,0.5);
+    24px 24px 60px rgba(0,0,0,0.45),
+    0 0 50px rgba(226, 184, 108, 0.15),
+    inset 0 1px 0 rgba(255,255,255,0.07);
   transition:transform .5s ease;
   animation:float4d 7s ease-in-out infinite;
 }
@@ -186,11 +195,11 @@ nav{
 .kv{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--white)}
 .kl{font-size:.58rem;color:var(--muted);margin-top:.15rem;font-weight:600;}
 .kt{font-size:.65rem;font-weight:600;margin-top:.3rem}
-.up{color:#0c8c62}.dn{color:#ef4444}
-.chart-mini{border-radius:8px;overflow:hidden;margin-bottom:.7rem;background:rgba(255, 255, 255, 0.5);border:1px solid rgba(181, 154, 82, 0.15);padding:.5rem}
+.up{color:#34d399}.dn{color:#ef4444}
+.chart-mini{border-radius:8px;overflow:hidden;margin-bottom:.7rem;background:rgba(255, 255, 255, 0.04);border:1px solid rgba(226, 184, 108, 0.18);padding:.5rem}
 .chart-mini canvas{max-height:90px}
 .chart-row2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
-.chart-mini2{border-radius:8px;overflow:hidden;background:rgba(255, 255, 255, 0.5);border:1px solid rgba(181, 154, 82, 0.15);padding:.5rem}
+.chart-mini2{border-radius:8px;overflow:hidden;background:rgba(255, 255, 255, 0.04);border:1px solid rgba(226, 184, 108, 0.18);padding:.5rem}
 .chart-mini2 canvas{max-height:75px}
 
 /* ══════════════════════════════
@@ -201,17 +210,17 @@ nav{
 .hero{position:relative}
 .holo-panel{
   position:absolute;z-index:3;pointer-events:none;
-  background:rgba(255,255,255,.55);
-  border:1px solid rgba(181,154,82,.3);
+  background:rgba(14,12,9,.6);
+  border:1px solid rgba(226,184,108,.35);
   border-radius:12px;padding:.7rem .9rem;
   backdrop-filter:blur(14px) saturate(160%);
-  box-shadow:0 14px 34px rgba(0,0,0,.07),0 0 24px rgba(181,154,82,.12);
+  box-shadow:0 14px 34px rgba(0,0,0,.4),0 0 22px rgba(226,184,108,.18);
   font-family:'Space Grotesk',sans-serif;
   animation:holoFloat 6.5s ease-in-out infinite;
 }
-.holo-panel .hp-label{font-size:.58rem;letter-spacing:.08em;color:var(--muted);font-weight:700;text-transform:uppercase}
-.holo-panel .hp-val{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:800;color:var(--white);margin-top:.15rem}
-.holo-panel .hp-val span{color:#0c8c62;font-size:.7rem;margin-left:.3rem}
+.holo-panel .hp-label{font-size:.58rem;letter-spacing:.08em;color:#b6ae9a;font-weight:700;text-transform:uppercase}
+.holo-panel .hp-val{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:800;color:#f3eee0;margin-top:.15rem}
+.holo-panel .hp-val span{color:#34d399;font-size:.7rem;margin-left:.3rem}
 .hp1{top:6%;right:2%;animation-delay:0s}
 .hp2{bottom:10%;right:14%;animation-delay:-3.2s}
 @keyframes holoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
@@ -563,8 +572,6 @@ to{transform:scale(1.15) translateY(-20px)}
 </head>
 <body>
 
-<canvas id="bg"></canvas>
-
 <nav>
   <div class="logo">Insight<em>Grid</em></div>
   <ul class="nav-links">
@@ -583,6 +590,9 @@ to{transform:scale(1.15) translateY(-20px)}
 <div class="page">
 
 <section class="hero">
+  <!-- 3D scene is confined to the hero only (absolute, not fixed) so the rest
+       of the site keeps its original light theme untouched -->
+  <canvas id="bg"></canvas>
   <!-- Decorative floating glass panels that flank the 3D holographic brain -->
   <div class="holo-panel hp1"><div class="hp-label">Model Confidence</div><div class="hp-val">98.2%<span>▲</span></div></div>
   <div class="holo-panel hp2"><div class="hp-label">Nodes Synced</div><div class="hp-val">12.4K<span>▲</span></div></div>
@@ -626,7 +636,7 @@ to{transform:scale(1.15) translateY(-20px)}
       </div>
       <div class="kpis">
         <div class="kpi"><div class="kv" style="color:var(--cyan)">$3.8M</div><div class="kl">Revenue</div><div class="kt up">↑ 23.4%</div></div>
-        <div class="kpi"><div class="kv" style="color:#0c8c62">2,841</div><div class="kl">Active Users</div><div class="kt up">↑ 11.2%</div></div>
+        <div class="kpi"><div class="kv" style="color:#34d399">2,841</div><div class="kl">Active Users</div><div class="kt up">↑ 11.2%</div></div>
         <div class="kpi"><div class="kv" style="color:var(--violet)">94.7%</div><div class="kl">Efficiency</div><div class="kt up">↑ 6.1%</div></div>
       </div>
       <div class="chart-mini"><canvas id="heroLine"></canvas></div>
@@ -918,209 +928,181 @@ async function submitFormAsJson(event) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   THREE.JS — PROCEDURAL HOLOGRAPHIC AI BRAIN HERO
-   Everything below is generated at runtime — no images/PNGs.
-   Sections: (1) renderer/scene/bloom  (2) brain particle field
-   (3) neural connections  (4) energy core glow  (5) orbiting
-   analytics icons  (6) atmosphere (dust/rays/starfield)
+   THREE.JS — HOLOGRAPHIC AI BRAIN HERO
+   Everything below is generated procedurally at runtime (no images).
+   Sections: (1) renderer/scene/camera  (2) wireframe brain mesh
+   (3) glowing node points  (4) sonar ripple rings + energy core
+   (5) wavy dotted dune floor  (6) atmosphere (stars/dust)
    (7) mouse parallax with auto-return  (8) render loop
+   Canvas is absolutely positioned inside .hero (not fixed), so this
+   scene — and its dark backdrop — stays contained to the hero only;
+   the rest of the site keeps its original light theme untouched.
 ════════════════════════════════════════════════════════════ */
 (function(){
   const canvas=document.getElementById('bg');
+  const heroEl=canvas.parentElement;
   const isMobile=innerWidth<700, isTablet=innerWidth>=700&&innerWidth<1100;
+  function size(){ return {w:heroEl.clientWidth||innerWidth, h:heroEl.clientHeight||innerHeight}; }
 
-  /* ---- 1. Renderer / Scene / Camera / Bloom ---- */
+  /* ---- 1. Renderer / Scene / Camera ---- */
+  let {w,h}=size();
   const R=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
   R.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.5:2));
-  R.setSize(innerWidth,innerHeight);
+  R.setSize(w,h);
   const S=new THREE.Scene();
-  S.fog=new THREE.FogExp2(0xece4d0,0.014); // matches page's cream backdrop for depth fade
-  const C=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,400);
-  C.position.set(0,0,42);
+  S.fog=new THREE.FogExp2(0x030201,0.016); // fades geometry into the dark hero backdrop
 
-  // NOTE: UnrealBloomPass/EffectComposer are intentionally NOT used here — on a
-  // transparent (alpha:true) canvas they flatten the background to opaque black,
-  // which would destroy this site's light cream theme behind every section.
-  // Instead, "bloom" is achieved cheaply via additive-blended ShaderMaterial glow
-  // (see brainMat fragment shader below) — same visual payoff, zero regression risk.
-  const GOLD=0xB59A52, OLIVE=0x6B7A3D, VIOLET=0x8A7A4F, CREAM=0xC3B091;
+  const C=new THREE.PerspectiveCamera(48,w/h,.1,400);
+  C.position.set(0,7,46);
+  C.lookAt(0,-3,0);
 
-  /* ---- Groups: world (mouse-reactive) vs static atmosphere ---- */
-  const world=new THREE.Group(); S.add(world);      // brain + core + icons + rays
-  const atmosphere=new THREE.Group(); S.add(atmosphere); // starfield + dust (subtle own parallax)
+  const GOLD_LINE=0xd9a94a, GOLD_BRIGHT=0xffd58a, GOLD_DIM=0x8a6a30;
 
-  /* ---- 2. HOLOGRAPHIC BRAIN — procedural particle field ---- */
-  const brainGroup=new THREE.Group(); world.add(brainGroup);
-  const PCOUNT=isMobile?1400:isTablet?2600:4600;
-  const positions=new Float32Array(PCOUNT*3);
-  const colors=new Float32Array(PCOUNT*3);
-  const sizes=new Float32Array(PCOUNT);
-  const phases=new Float32Array(PCOUNT);
-  const tmpColor=new THREE.Color();
+  const world=new THREE.Group(); S.add(world);        // brain + core (mouse-reactive)
+  const ground=new THREE.Group(); S.add(ground);      // dune floor + rings (stable, no parallax)
+  world.position.y=5;
 
-  // Fibonacci sphere distribution warped into two brain-like hemispheres
-  const golden=Math.PI*(3-Math.sqrt(5));
-  for(let i=0;i<PCOUNT;i++){
-    const y=1-(i/(PCOUNT-1))*2;               // -1..1
-    const rXY=Math.sqrt(Math.max(0,1-y*y));
-    const theta=golden*i;
-    let x=Math.cos(theta)*rXY, z=Math.sin(theta)*rXY;
-    // brain-fold displacement via layered sine harmonics
-    const fold=1+.16*Math.sin(6*theta+y*4)*Math.cos(5*y*Math.PI)+.07*Math.sin(10*theta-3*y);
-    // central longitudinal groove (sulcus) between hemispheres
-    const groove=1-.22*Math.exp(-Math.pow(x*7,2));
-    const R0=9.5*fold*groove;
-    let px=x*R0*1.08, py=y*R0*0.92, pz=z*R0*1.22; // ellipsoid brain proportions
-    positions[i*3]=px; positions[i*3+1]=py; positions[i*3+2]=pz;
-
-    const t=(x+1)/2;
-    tmpColor.setHSL(.11+t*.08,.55,.42+Math.random()*.18); // gold→olive→violet gradient
-    colors[i*3]=tmpColor.r; colors[i*3+1]=tmpColor.g; colors[i*3+2]=tmpColor.b;
-    sizes[i]=Math.random()<0.06?2.6:1.1; // sparse brighter "glowing nodes"
-    phases[i]=Math.random()*Math.PI*2;
+  /* ---- 2. Wireframe brain — icosphere deformed into brain folds ---- */
+  const icoDetail=isMobile?2:3;
+  const brainGeo=new THREE.IcosahedronGeometry(9.5,icoDetail);
+  const pos=brainGeo.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const vx=pos.getX(i),vy=pos.getY(i),vz=pos.getZ(i);
+    const len=Math.sqrt(vx*vx+vy*vy+vz*vz)||1;
+    const nx=vx/len,ny=vy/len,nz=vz/len;
+    const theta=Math.atan2(nz,nx);
+    const fold=1+.16*Math.sin(6*theta+ny*4)*Math.cos(5*ny*Math.PI)+.06*Math.sin(10*theta-3*ny);
+    const groove=1-.2*Math.exp(-Math.pow(nx*6,2)); // central sulcus between hemispheres
+    const r=len*fold*groove;
+    pos.setXYZ(i,nx*r*1.05,ny*r*0.92,nz*r*1.2);
   }
-  const brainGeo=new THREE.BufferGeometry();
-  brainGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
-  brainGeo.setAttribute('color',new THREE.BufferAttribute(colors,3));
-  brainGeo.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));
-  brainGeo.setAttribute('aPhase',new THREE.BufferAttribute(phases,1));
+  brainGeo.computeVertexNormals();
 
-  const brainMat=new THREE.ShaderMaterial({
-    uniforms:{uTime:{value:0},uPixelRatio:{value:R.getPixelRatio()}},
+  const wireGeo=new THREE.WireframeGeometry(brainGeo);
+  const wireMat=new THREE.LineBasicMaterial({color:GOLD_LINE,transparent:true,opacity:.5,blending:THREE.AdditiveBlending});
+  const wireframe=new THREE.LineSegments(wireGeo,wireMat);
+  world.add(wireframe);
+
+  /* ---- 3. Glowing node points at every brain vertex ---- */
+  const nodeCount=pos.count;
+  const nodeSizes=new Float32Array(nodeCount);
+  const nodePhase=new Float32Array(nodeCount);
+  for(let i=0;i<nodeCount;i++){ nodeSizes[i]=Math.random()<.12?2.6:1.3; nodePhase[i]=Math.random()*Math.PI*2; }
+  const nodeGeo=new THREE.BufferGeometry();
+  nodeGeo.setAttribute('position',new THREE.BufferAttribute(pos.array.slice(),3));
+  nodeGeo.setAttribute('aSize',new THREE.BufferAttribute(nodeSizes,1));
+  nodeGeo.setAttribute('aPhase',new THREE.BufferAttribute(nodePhase,1));
+  const nodeMat=new THREE.ShaderMaterial({
+    uniforms:{uTime:{value:0},uPixelRatio:{value:R.getPixelRatio()},uColor:{value:new THREE.Color(GOLD_BRIGHT)}},
     vertexShader:`
       attribute float aSize; attribute float aPhase;
-      varying vec3 vColor;
       uniform float uTime; uniform float uPixelRatio;
+      varying float vGlow;
       void main(){
-        vColor=color;
-        vec3 p=position;
-        p+=normalize(position)*sin(uTime*1.1+aPhase)*.18; // gentle breathing
+        vec3 p=position*(1.0+sin(uTime*1.1+aPhase)*0.012); // subtle breathing
         vec4 mv=modelViewMatrix*vec4(p,1.0);
-        float pulse=1.0+0.35*sin(uTime*2.0+aPhase);
-        gl_PointSize=aSize*pulse*uPixelRatio*(140.0/-mv.z);
+        float pulse=0.65+0.5*sin(uTime*2.0+aPhase);
+        vGlow=pulse;
+        gl_PointSize=aSize*(0.8+pulse*0.6)*uPixelRatio*(150.0/-mv.z);
         gl_Position=projectionMatrix*mv;
       }`,
     fragmentShader:`
-      varying vec3 vColor;
+      uniform vec3 uColor; varying float vGlow;
       void main(){
         float d=length(gl_PointCoord-vec2(.5));
         float glow=smoothstep(.5,0.0,d);
-        gl_FragColor=vec4(vColor,glow*0.9);
+        gl_FragColor=vec4(uColor,glow*(.55+vGlow*.45));
       }`,
-    vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending
+    transparent:true,depthWrite:false,blending:THREE.AdditiveBlending
   });
-  const brainPoints=new THREE.Points(brainGeo,brainMat);
-  brainGroup.add(brainPoints);
+  const nodePoints=new THREE.Points(nodeGeo,nodeMat);
+  world.add(nodePoints);
 
-  /* ---- 3. Neural connections between nearby glowing nodes ---- */
-  const nodeIdx=[]; for(let i=0;i<PCOUNT;i++) if(sizes[i]>2) nodeIdx.push(i);
-  const linePos=[];
-  const maxDist=isMobile?5.5:6.2;
-  for(let a=0;a<nodeIdx.length;a++){
-    for(let b=a+1;b<nodeIdx.length;b++){
-      const i=nodeIdx[a],j=nodeIdx[b];
-      const dx=positions[i*3]-positions[j*3],dy=positions[i*3+1]-positions[j*3+1],dz=positions[i*3+2]-positions[j*3+2];
-      const d=Math.sqrt(dx*dx+dy*dy+dz*dz);
-      if(d<maxDist){
-        linePos.push(positions[i*3],positions[i*3+1],positions[i*3+2],positions[j*3],positions[j*3+1],positions[j*3+2]);
-      }
-    }
-  }
-  const lineGeo=new THREE.BufferGeometry();
-  lineGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(linePos),3));
-  const lineMat=new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:.16,blending:THREE.AdditiveBlending});
-  const neuralLines=new THREE.LineSegments(lineGeo,lineMat);
-  brainGroup.add(neuralLines);
-
-  /* ---- 4. Energy core glow beneath the brain ---- */
+  /* ---- 4. Energy core + sonar ripple rings beneath the brain ---- */
   function radialTexture(hex){
     const cvs=document.createElement('canvas'); cvs.width=cvs.height=256;
     const ctx=cvs.getContext('2d');
     const g=ctx.createRadialGradient(128,128,0,128,128,128);
-    g.addColorStop(0,hex+'ff'); g.addColorStop(.4,hex+'88'); g.addColorStop(1,hex+'00');
+    g.addColorStop(0,hex+'ff'); g.addColorStop(.4,hex+'77'); g.addColorStop(1,hex+'00');
     ctx.fillStyle=g; ctx.fillRect(0,0,256,256);
     return new THREE.CanvasTexture(cvs);
   }
-  const coreTex=radialTexture('#B59A52');
-  const core=new THREE.Sprite(new THREE.SpriteMaterial({map:coreTex,transparent:true,opacity:.5,blending:THREE.AdditiveBlending,depthWrite:false}));
-  core.scale.set(26,26,1); core.position.set(0,-13,-4);
-  brainGroup.add(core);
+  const coreTex=radialTexture('#ffd58a');
+  const core=new THREE.Sprite(new THREE.SpriteMaterial({map:coreTex,transparent:true,opacity:.55,blending:THREE.AdditiveBlending,depthWrite:false}));
+  core.scale.set(20,20,1); core.position.set(0,-18,0);
+  ground.add(core);
 
-  /* ---- 5. Orbiting holographic analytics icons ---- */
-  const iconLabels=['📊 Power BI','📈 Tableau','🗄️ SQL','🐍 Python','❄️ Snowflake','🧩 Fabric','⚙️ Alteryx','☁️ Cloud','🧠 AI','💾 Database','📉 Analytics','📶 Charts'];
-  function iconTexture(label){
-    const cvs=document.createElement('canvas'); cvs.width=256; cvs.height=96;
-    const ctx=cvs.getContext('2d');
-    const g=ctx.createRadialGradient(128,48,4,128,48,110);
-    g.addColorStop(0,'rgba(181,154,82,.55)'); g.addColorStop(1,'rgba(181,154,82,0)');
-    ctx.fillStyle=g; ctx.fillRect(0,0,256,96);
-    ctx.font='600 30px "Space Grotesk",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillStyle='rgba(34,34,34,.92)'; ctx.fillText(label,128,50);
-    return new THREE.CanvasTexture(cvs);
+  const RING_Y=-18, RING_MAX=30, RING_COUNT=4;
+  const rings=[];
+  for(let i=0;i<RING_COUNT;i++){
+    const rg=new THREE.RingGeometry(1,1.06,72);
+    const rm=new THREE.MeshBasicMaterial({color:GOLD_LINE,transparent:true,opacity:.4,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,depthWrite:false});
+    const ring=new THREE.Mesh(rg,rm);
+    ring.rotation.x=-Math.PI/2; ring.position.y=RING_Y;
+    ring.userData.phase=i/RING_COUNT;
+    ground.add(ring); rings.push(ring);
   }
-  const orbitGroup=new THREE.Group(); world.add(orbitGroup);
-  const icons=iconLabels.map((label,i)=>{
-    const tex=iconTexture(label);
-    const spr=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));
-    const scale=isMobile?5.5:7.5;
-    spr.scale.set(scale,scale*.375,1);
-    const ring=i%3, radius=15+ring*4.5, incl=(ring-1)*.5;
-    const angle=(i/iconLabels.length)*Math.PI*2;
-    orbitGroup.add(spr);
-    return {spr,radius,incl,angle,speed:.12+ring*.03+Math.random()*.03};
-  });
 
-  /* ---- 6. Atmosphere — starfield, floating dust, light rays ---- */
-  const scCount=isMobile?900:2200, sp=new Float32Array(scCount*3);
-  for(let i=0;i<scCount;i++){sp[i*3]=(Math.random()-.5)*260;sp[i*3+1]=(Math.random()-.5)*180;sp[i*3+2]=(Math.random()-.5)*260-40}
+  /* ---- 5. Wavy dotted dune floor ---- */
+  const gSeg=isMobile?26:44, gSize=110;
+  const groundGeo=new THREE.PlaneGeometry(gSize,gSize,gSeg,gSeg);
+  groundGeo.rotateX(-Math.PI/2);
+  const gp=groundGeo.attributes.position;
+  for(let i=0;i<gp.count;i++){
+    const gx=gp.getX(i),gz=gp.getZ(i);
+    const wave=Math.sin(gx*.18)*2.2+Math.cos(gz*.15)*1.6+Math.sin((gx+gz)*.09)*1.2;
+    gp.setY(i,wave);
+  }
+  groundGeo.computeVertexNormals();
+  const groundMat=new THREE.PointsMaterial({color:GOLD_DIM,size:.55,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false});
+  const dunePoints=new THREE.Points(groundGeo,groundMat);
+  dunePoints.position.y=RING_Y-2;
+  ground.add(dunePoints);
+
+  /* ---- 6. Atmosphere — sparse starfield + drifting gold dust ---- */
+  const scCount=isMobile?400:900, sp=new Float32Array(scCount*3);
+  for(let i=0;i<scCount;i++){sp[i*3]=(Math.random()-.5)*220;sp[i*3+1]=(Math.random()-.5)*120+20;sp[i*3+2]=(Math.random()-.5)*220-60}
   const starGeo=new THREE.BufferGeometry(); starGeo.setAttribute('position',new THREE.BufferAttribute(sp,3));
-  atmosphere.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:CREAM,size:.35,transparent:true,opacity:.45,blending:THREE.AdditiveBlending,depthWrite:false})));
+  S.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xd9c9a0,size:.3,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false})));
 
-  const dustCount=isMobile?150:400, dp=new Float32Array(dustCount*3);
-  for(let i=0;i<dustCount;i++){dp[i*3]=(Math.random()-.5)*90;dp[i*3+1]=(Math.random()-.5)*60;dp[i*3+2]=(Math.random()-.5)*90}
+  const dustCount=isMobile?100:260, dp=new Float32Array(dustCount*3);
+  for(let i=0;i<dustCount;i++){dp[i*3]=(Math.random()-.5)*70;dp[i*3+1]=(Math.random()-.5)*40+5;dp[i*3+2]=(Math.random()-.5)*70}
   const dustGeo=new THREE.BufferGeometry(); dustGeo.setAttribute('position',new THREE.BufferAttribute(dp,3));
-  const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({color:GOLD,size:.5,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false}));
+  const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({color:GOLD_BRIGHT,size:.45,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false}));
   world.add(dust);
 
-  const rays=new THREE.Group();
-  for(let i=0;i<5;i++){
-    const rayTex=radialTexture('#B59A52');
-    const ray=new THREE.Sprite(new THREE.SpriteMaterial({map:rayTex,transparent:true,opacity:.06,blending:THREE.AdditiveBlending,depthWrite:false}));
-    ray.scale.set(60,10,1); ray.position.set(0,0,-20);
-    ray.material.rotation=(i/5)*Math.PI*2;
-    rays.add(ray);
-  }
-  world.add(rays);
-
-  /* ---- 7. Mouse parallax with smooth auto-return ---- */
+  /* ---- 7. Mouse parallax on the brain, with smooth auto-return ---- */
   let mx=0,my=0,lastMove=Date.now(),targetX=0,targetY=0;
-  document.addEventListener('mousemove',e=>{
-    mx=(e.clientX/innerWidth-.5)*2; my=(e.clientY/innerHeight-.5)*2; lastMove=Date.now();
+  heroEl.addEventListener('mousemove',e=>{
+    const rect=heroEl.getBoundingClientRect();
+    mx=((e.clientX-rect.left)/rect.width-.5)*2; my=((e.clientY-rect.top)/rect.height-.5)*2; lastMove=Date.now();
   });
   addEventListener('resize',()=>{
-    C.aspect=innerWidth/innerHeight; C.updateProjectionMatrix(); R.setSize(innerWidth,innerHeight);
+    const s=size(); C.aspect=s.w/s.h; C.updateProjectionMatrix(); R.setSize(s.w,s.h);
   });
 
   /* ---- 8. Render loop ---- */
   let t=0;
   (function tick(){
     requestAnimationFrame(tick); t+=.01;
-    const idle=Date.now()-lastMove>1200; // camera drifts back to center once mouse stops
+    const idle=Date.now()-lastMove>1200;
     targetX+=((idle?0:mx)-targetX)*.04;
     targetY+=((idle?0:my)-targetY)*.04;
-    world.rotation.y+=(targetX*.5-world.rotation.y)*.05;
-    world.rotation.x+=(-targetY*.3-world.rotation.x)*.05;
-    world.rotation.y+=.0009; // slow autonomous rotation ("breathing" brain)
+    world.rotation.y+=(targetX*.4-world.rotation.y)*.05;
+    world.rotation.x+=(-targetY*.2-world.rotation.x)*.05;
+    world.rotation.y+=.0008; // slow autonomous rotation — the brain "breathes"
 
-    brainMat.uniforms.uTime.value=t;
-    core.material.opacity=.4+Math.sin(t*1.4)*.15;
-    core.scale.setScalar(26+Math.sin(t*1.1)*2.5);
-    rays.rotation.z+=.0006;
-    dust.rotation.y+=.0008;
+    nodeMat.uniforms.uTime.value=t;
+    core.material.opacity=.4+Math.sin(t*1.3)*.15;
+    core.scale.setScalar(20+Math.sin(t*1.1)*2);
+    dust.rotation.y+=.0006;
+    ground.rotation.y+=.00015; // imperceptibly slow — keeps the dune floor feeling alive
 
-    icons.forEach(o=>{
-      o.angle+=o.speed*.01;
-      o.spr.position.set(Math.cos(o.angle)*o.radius,Math.sin(o.angle*.7)*o.radius*o.incl,Math.sin(o.angle)*o.radius);
+    rings.forEach(r=>{
+      const p=((t*.05)+r.userData.phase)%1;
+      const s=1+p*RING_MAX;
+      r.scale.set(s,s,1);
+      r.material.opacity=.4*(1-p);
     });
 
     R.render(S,C);
