@@ -27,13 +27,13 @@
 html{scroll-behavior:smooth}
 body{
   font-family:'Space Grotesk',sans-serif;
-  background:linear-gradient(135deg,#f8f6f0,#ece8dc,#d8cfbb);
+  background:linear-gradient(180deg,#020202,#050505,#090909);
   color:var(--white);
   overflow-x:hidden;
 }
 
 /* ── CANVAS (scoped to .hero — see below) ── */
-#bg{position:fixed;inset:0;z-index:1;pointer-events:none}
+#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 
 /* ── NOISE OVERLAY ── */
 body::before{
@@ -79,7 +79,7 @@ nav{
 /* ══════════════════════════════
    HERO
 ══════════════════════════════ */
-.hero{
+background:transparent;
   min-height:100vh;display:grid;
   grid-template-columns:1fr 1fr;
   align-items:center;gap:3rem;
@@ -207,7 +207,7 @@ nav{
    Small glass "satellite" widgets that float beside the
    holographic brain scene — pure CSS, GPU-cheap, decorative.
 ══════════════════════════════ */
-.hero{position:relative}
+background:transparent;position:relative}
 .holo-panel{
   position:absolute;z-index:3;pointer-events:none;
   background:rgba(14,12,9,.6);
@@ -539,7 +539,7 @@ footer p{font-size:.75rem;color:var(--muted); font-weight: 600;}
 .card p { font-size: 0.85rem; color: var(--muted); }
 
 @media(max-width:960px){
-  .hero{grid-template-columns:1fr;padding-top:6rem}
+  background:transparent;grid-template-columns:1fr;padding-top:6rem}
   .hero-dash{display:none}
   .hero-stats{grid-template-columns:repeat(2,1fr)}
   .why-grid{grid-template-columns:1fr}
@@ -940,9 +940,9 @@ async function submitFormAsJson(event) {
 ════════════════════════════════════════════════════════════ */
 (function(){
   const canvas=document.getElementById('bg');
-  const heroEl=canvas.parentElement;
+  const heroEl=document.body;
   const isMobile=innerWidth<700, isTablet=innerWidth>=700&&innerWidth<1100;
-  function size(){ return {w:heroEl.clientWidth||innerWidth, h:heroEl.clientHeight||innerHeight}; }
+  function size(){ return {w:window.innerWidth, h:window.innerHeight}; }
 
   /* ---- 1. Renderer / Scene / Camera ---- */
   let {w,h}=size();
