@@ -140,12 +140,6 @@ nav {
 .badge { font-size: 0.65rem; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--border-gold); backdrop-filter: blur(5px); text-decoration: none; transition: all 0.3s ease; }
 .badge-top { background: rgba(181, 154, 82, 0.15); color: var(--gold); }
 .badge-top:hover { background: rgba(181, 154, 82, 0.3); border-color: var(--gold); }
-.badge-upwork { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: var(--emerald); }
-.badge-upwork:hover { background: rgba(16, 185, 129, 0.3); border-color: var(--emerald); box-shadow: 0 0 10px rgba(16,185,129,0.3); }
-.badge-agency { background: rgba(107, 122, 61, 0.15); border-color: rgba(107, 122, 61, 0.3); color: #a3b85c; }
-.badge-agency:hover { background: rgba(107, 122, 61, 0.3); border-color: #a3b85c; box-shadow: 0 0 10px rgba(107,122,61,0.3); }
-.badge-linkedin { background: rgba(10, 102, 194, 0.15); border-color: rgba(10, 102, 194, 0.3); color: #58a6ff; }
-.badge-linkedin:hover { background: rgba(10, 102, 194, 0.3); border-color: #58a6ff; box-shadow: 0 0 10px rgba(10,102,194,0.3); }
 .badge svg { width: 12px; height: 12px; fill: currentColor; }
 
 .hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 4vw, 4rem); font-weight: 900; line-height: 1.05; margin-bottom: 1rem; text-shadow: 0 10px 30px rgba(0,0,0,0.8); }
@@ -156,87 +150,52 @@ nav {
 .btn-sec { border: 1px solid var(--border-gold); color: var(--text-main); font-size: 0.9rem; padding: 0.8rem 1.8rem; border-radius: 6px; font-weight: 600; text-decoration: none; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); transition: all 0.3s ease; }
 .btn-sec:hover { background: rgba(181, 154, 82, 0.2); border-color: var(--gold); transform: translateY(-3px); }
 
-.hero-stats { display: flex; gap: 2.5rem; }
-.stat-val { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--gold); text-shadow: 0 0 15px rgba(181, 154, 82, 0.3); }
-.stat-lbl { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.05em;}
-
-.hero-dash { perspective: 1200px; display: flex; justify-content: center; }
-.dash-tilt { padding: 1.5rem; width: 100%; max-width: 450px; transform: rotateY(-12deg) rotateX(5deg); box-shadow: 20px 20px 50px rgba(0,0,0,0.9), -5px -5px 30px rgba(181, 154, 82, 0.05); transition: transform 0.5s ease; border: 1px solid rgba(181,154,82,0.3); }
-.dash-tilt:hover { transform: rotateY(0deg) rotateX(0deg) scale(1.02); border-color: var(--gold); }
-.dash-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.2rem; }
-.dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
-.kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1.2rem; }
-.kpi-card { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 8px; transition: border-color 0.3s; }
-.kpi-card:hover { border-color: var(--border-gold); }
-
-/* ── CHARTS SHOWCASE ── */
-.charts-marquee-container {
-  margin-top: 1.5rem;
-  width: 100%;
-  overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-  padding: 0.5rem 0;
-}
-.charts-marquee-track {
-  display: flex;
-  gap: 1.5rem;
-  width: max-content;
-  animation: scrollChartsMarquee 70s linear infinite;
-}
-.charts-marquee-container:hover .charts-marquee-track {
-  animation-play-state: paused;
-}
-@keyframes scrollChartsMarquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.chart-card {
-  width: 320px;
-  padding: 1.5rem;
-  flex-shrink: 0;
-}
-.chart-card:hover { transform: translateY(-5px); border-color: var(--border-gold-glow); box-shadow: 0 10px 30px rgba(181, 154, 82, 0.15); }
-.cc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.cc-title { font-weight: 600; font-size: 0.9rem; letter-spacing: 0.02em; }
-.cc-badge { font-size: 0.6rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 12px; background: rgba(181, 154, 82, 0.15); border: 1px solid var(--border-gold); color: var(--gold); }
-.chart-container { position: relative; height: 180px; width: 100%; }
-
 /* ── ALTERYX WORKFLOWS ── */
 .alteryx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; margin-top: 3.5rem; }
 .workflow-card { padding: 1.2rem; text-align: center; }
-.workflow-img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-gold); margin-bottom: 1.2rem; opacity: 0.85; filter: grayscale(20%); transition: all 0.4s ease; }
 .workflow-card:hover { transform: translateY(-5px); border-color: var(--border-gold-glow); }
-.workflow-card:hover .workflow-img { opacity: 1; filter: grayscale(0%); border-color: var(--gold); box-shadow: 0 0 20px rgba(181, 154, 82, 0.2); }
 .wf-title { font-family: var(--font-display); font-size: 0.95rem; color: var(--gold); margin-bottom: 0.4rem; }
 .wf-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
-
-/* ── SERVICES ── */
-.svcs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; margin-top: 3.5rem; }
-.svc { padding: 2.5rem 1.8rem; text-align: center; }
-.svc:hover { transform: translateY(-5px); border-color: var(--border-gold-glow); box-shadow: 0 10px 30px rgba(181, 154, 82, 0.1); }
-.svc-ico { font-size: 2.5rem; margin-bottom: 1.2rem; display: block; filter: drop-shadow(0 0 10px rgba(181, 154, 82, 0.4)); }
-.svc h3 { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 0.8rem; color: var(--text-main); }
-.svc p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
-.tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
-.tag { font-size: 0.65rem; padding: 0.3rem 0.8rem; border-radius: 20px; background: rgba(0,0,0,0.6); color: var(--gold); border: 1px solid var(--border-gold); font-weight: 500; letter-spacing: 0.05em; }
 
 /* ── CONTACT ── */
 .contact-wrap { max-width: 600px; margin: 3.5rem auto 0; padding: 2.5rem; }
 .cform { display: flex; flex-direction: column; gap: 1.2rem; }
+.crow { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 .ci { background: rgba(0,0,0,0.6); border: 1px solid var(--border-gold); border-radius: 8px; padding: 1rem 1.2rem; color: var(--text-main); font-family: var(--font-body); font-size: 0.95rem; outline: none; width: 100%; transition: all 0.3s ease; }
 .ci:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(181, 154, 82, 0.2); }
 textarea.ci { resize: vertical; min-height: 140px; }
 .csub { background: linear-gradient(135deg, var(--olive), var(--gold)); color: #fff; border: none; padding: 1rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
 .csub:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(181, 154, 82, 0.4); }
 
+/* Form Notification Banner */
+#form-message {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+  display: none;
+}
+#form-message.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--emerald);
+  color: var(--emerald);
+  display: block;
+}
+#form-message.error {
+  background: rgba(217, 119, 6, 0.15);
+  border: 1px solid var(--rust);
+  color: #f87171;
+  display: block;
+}
+
 footer { text-align: center; padding: 2.5rem 5%; border-top: 1px solid var(--border-gold); margin-top: 5rem; color: var(--text-muted); font-size: 0.85rem; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
 
 @media(max-width: 960px) {
   .hero { grid-template-columns: 1fr; text-align: center; padding-top: 8rem; }
-  .badge-row, .hero-btns, .hero-stats { justify-content: center; }
+  .badge-row, .hero-btns { justify-content: center; }
   .nav-links { display: none; }
-  .dash-tilt { transform: none; max-width: 100%; }
+  .crow { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -251,9 +210,7 @@ footer { text-align: center; padding: 2.5rem 5%; border-top: 1px solid var(--bor
 <nav>
   <div class="logo">Insight<em>Grid</em></div>
   <ul class="nav-links">
-    <li><a href="#charts">Dashboards</a></li>
     <li><a href="#alteryx">Workflows</a></li>
-    <li><a href="#services">Services</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="nav-right">
@@ -284,7 +241,6 @@ footer { text-align: center; padding: 2.5rem 5%; border-top: 1px solid var(--bor
       
       <div class="hero-btns">
         <a href="#contact" class="btn-prime">Start a Project →</a>
-        <a href="#charts" class="btn-sec">View Live Dashboards</a>
       </div>
     </div>
   </section>
@@ -321,27 +277,28 @@ footer { text-align: center; padding: 2.5rem 5%; border-top: 1px solid var(--bor
 
   <div class="hdiv"></div>
 
-  <!-- CONTACT SECTION WITH FORMSPREE -->
-  <section id="contact" class="rv sec">
+  <!-- CONTACT SECTION WITH FORMSPREE AJAX -->
+  <section id="contact" class="sec">
     <div class="sec-hl" style="display:block;text-align:center">Contact</div>
     <h2 class="sec-h" style="text-align:center">Let's Transform<br/>Your Data</h2>
-    <p style="text-align:center;color:var(--muted);font-size:.92rem;max-width:440px;margin:.5rem auto 0;line-height:1.7">Tell us about your project — we'll respond within 24 hours with a tailored plan and quote.</p>
+    <p style="text-align:center;color:var(--text-muted);font-size:.92rem;max-width:440px;margin:.5rem auto 0;line-height:1.7">Tell us about your project — we'll respond within 24 hours with a tailored plan and quote.</p>
     <div class="contact-wrap glass-panel">
-      <form class="cform" action="https://formspree.io/f/mqevedjk" method="POST">
+      <form id="ajax-form" class="cform" action="https://formspree.io/f/mqevedjk" method="POST">
         <div class="crow">
           <input type="text" name="name" class="ci" placeholder="Your Name" required/>
           <input type="email" name="email" class="ci" placeholder="Email Address" required/>
         </div>
-        <select name="service" class="ci">
+        <select name="service" class="ci" required>
           <option value="" disabled selected>Select Service</option>
-          <option>Power BI Dashboard</option>
-          <option>Tableau Visualization</option>
-          <option>Alteryx Automation</option>
-          <option>Excel</option>
-          <option>Multiple Services</option>
+          <option value="Power BI Dashboard">Power BI Dashboard</option>
+          <option value="Tableau Visualization">Tableau Visualization</option>
+          <option value="Alteryx Automation">Alteryx Automation</option>
+          <option value="Excel">Excel</option>
+          <option value="Multiple Services">Multiple Services</option>
         </select>
-        <textarea name="message" class="ci" placeholder="Describe your project — data sources, goals, and requirements..."></textarea>
-        <button type="submit" class="csub">Send Message →</button>
+        <textarea name="message" class="ci" placeholder="Describe your project — data sources, goals, and requirements..." required></textarea>
+        <button type="submit" id="form-submit-btn" class="csub">Send Message →</button>
+        <div id="form-message"></div>
       </form>
     </div>
   </section>
@@ -351,6 +308,56 @@ footer { text-align: center; padding: 2.5rem 5%; border-top: 1px solid var(--bor
   </footer>
 
 </div>
+
+<!-- AJAX Submission Script for Formspree -->
+<script>
+  var form = document.getElementById("ajax-form");
+  
+  async function handleSubmit(event) {
+    event.preventDefault();
+    var status = document.getElementById("form-message");
+    var btn = document.getElementById("form-submit-btn");
+    var data = new FormData(event.target);
+    
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    
+    fetch(event.target.action, {
+      method: form.method,
+      body: data,
+      headers: {
+          'Accept': 'application/json'
+      }
+    }).then(response => {
+      if (response.ok) {
+        status.className = "success";
+        status.innerHTML = "Success! Your message has been sent. We'll be in touch soon.";
+        form.reset();
+        btn.disabled = false;
+        btn.textContent = "Send Message →";
+      } else {
+        response.json().then(data => {
+          if (Object.hasOwn(data, 'errors')) {
+            status.className = "error";
+            status.innerHTML = data["errors"].map(error => error["message"]).join(", ");
+          } else {
+            status.className = "error";
+            status.innerHTML = "Oops! There was a problem submitting your form.";
+          }
+          btn.disabled = false;
+          btn.textContent = "Send Message →";
+        })
+      }
+    }).catch(error => {
+      status.className = "error";
+      status.innerHTML = "Oops! There was a connection error. Please try again.";
+      btn.disabled = false;
+      btn.textContent = "Send Message →";
+    });
+  }
+  
+  form.addEventListener("submit", handleSubmit);
+</script>
 
 </body>
 </html>
