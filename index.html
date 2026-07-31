@@ -1,277 +1,644 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>InsightGrid Analytics & Automation — Usama Shafiq</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>InsightGrid Analytics & Automation — Usama Shafiq</title>
 
-  <!-- Typography: Cleaned up for maximum legibility -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<!-- Sleek Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
 
-  <!-- Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <style>
-    :root {
-      /* Refined Premium Palette (Eye-friendly, high contrast) */
-      --bg-dark: #07090e;
-      --bg-card: rgba(15, 23, 42, 0.65);
-      --bg-card-border: rgba(255, 255, 255, 0.08);
-      --accent-cyan: #38bdf8;
-      --accent-gold: #f59e0b;
-      --accent-green: #10b981;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --font-body: 'Inter', sans-serif;
-      --font-heading: 'Space Grotesk', sans-serif;
-      --font-display: 'Orbitron', monospace;
-    }
+<style>
+/* ── DESIGN SYSTEM & OLIVE GREEN THEME ── */
+:root {
+  --bg-deep: #050705;
+  --bg-panel: rgba(12, 17, 12, 0.75);
+  --border-gold: rgba(181, 154, 82, 0.25);
+  --border-gold-glow: rgba(181, 154, 82, 0.6);
+  
+  --olive: #6B7A3D;
+  --gold: #B59A52;
+  --emerald: #10b981;
+  --rust: #d97706;
+  
+  --text-main: #e8e4d8;
+  --text-muted: #9ba89b;
+  
+  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-display: 'Orbitron', monospace;
+}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 14px; }
 
-    body {
-      font-family: var(--font-body);
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
 
-    /* ── Subtle Background Accent ── */
-    #bg {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.4;
-    }
+/* ── FULL SCREEN 3D CANVAS ── */
+#bg {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 0; pointer-events: none;
+}
 
-    /* ── Navigation ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 8%;
-      background: rgba(7, 9, 14, 0.8);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--bg-card-border);
-    }
-    .logo {
-      font-family: var(--font-display);
-      font-weight: 900; font-size: 1.1rem; letter-spacing: .05em;
-      color: var(--text-main);
-    }
-    .logo em { font-style: normal; color: var(--accent-cyan); }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      color: var(--text-muted); text-decoration: none;
-      font-size: 0.9rem; font-weight: 500; transition: color 0.2s ease;
-    }
-    .nav-links a:hover { color: var(--text-main); }
-    .nav-cta {
-      background: var(--accent-cyan); color: #07090e;
-      padding: 0.55rem 1.25rem; border-radius: 6px;
-      text-decoration: none; font-size: 0.85rem; font-weight: 700;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-    .nav-cta:hover { transform: translateY(-1px); opacity: 0.9; }
+.brain-layer {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: -1; pointer-events: none; overflow: hidden;
+}
 
-    /* ── Layout & Typography Sections ── */
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 2; }
-    .sec { padding: 6rem 0; }
-    
-    .sec-hl {
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
-      text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 0.5rem;
-    }
-    .sec-h {
-      font-family: var(--font-heading);
-      font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 700;
-      color: var(--text-main); line-height: 1.2; margin-bottom: 0.75rem;
-    }
-    .sec-p { color: var(--text-muted); font-size: 1rem; max-width: 540px; }
+.brain-img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  animation: electricPulse 3s infinite alternate, breathe 12s ease-in-out infinite;
+}
 
-    /* ── Hero Section ── */
-    .hero {
-      min-height: 100vh; display: flex; align-items: center;
-      position: relative; padding-top: 5rem;
-    }
-    .hero-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
-    }
-    .badge-row { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
-    .badge {
-      font-size: 0.75rem; font-weight: 600; padding: 0.3rem 0.75rem;
-      border-radius: 20px; border: 1px solid var(--bg-card-border);
-      background: rgba(255, 255, 255, 0.03); color: var(--text-muted);
-      text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;
-    }
-    .badge-top { border-color: rgba(245, 158, 11, 0.3); color: var(--accent-gold); }
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
 
-    .hero h1 {
-      font-family: var(--font-heading);
-      font-size: clamp(2.2rem, 4vw, 3.4rem);
-      font-weight: 700; line-height: 1.1; margin-bottom: 1rem;
-    }
-    .hero h1 span.highlight {
-      color: var(--accent-cyan);
-    }
-    .hero-sub { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem; }
+@keyframes electricPulse {
+  0% { filter: drop-shadow(0 0 10px rgba(181, 154, 82, 0.2)) contrast(1.1) brightness(0.8); }
+  100% { filter: drop-shadow(0 0 40px rgba(181, 154, 82, 0.8)) contrast(1.3) brightness(1.2); }
+}
 
-    .hero-btns { display: flex; gap: 1rem; margin-bottom: 3rem; }
-    .btn-prime {
-      background: var(--accent-cyan); color: #07090e;
-      padding: 0.8rem 1.6rem; border-radius: 8px; font-weight: 700;
-      text-decoration: none; transition: transform 0.2s;
-    }
-    .btn-sec {
-      border: 1px solid var(--bg-card-border); color: var(--text-main);
-      padding: 0.8rem 1.6rem; border-radius: 8px; font-weight: 600;
-      text-decoration: none; transition: background 0.2s;
-    }
-    .btn-prime:hover { transform: translateY(-2px); }
-    .btn-sec:hover { background: rgba(255, 255, 255, 0.05); }
+/* ── NAVIGATION ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 5%;
+  background: rgba(5, 7, 5, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-gold);
+}
+.logo { font-family: var(--font-display); font-weight: 900; font-size: 1.1rem; letter-spacing: .05em; color: var(--text-main); }
+.logo em { font-style: normal; color: var(--gold); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: color 0.2s; letter-spacing: 0.05em; text-transform: uppercase; }
+.nav-links a:hover { color: var(--gold); text-shadow: 0 0 8px rgba(181, 154, 82, 0.5); }
+.nav-cta { background: linear-gradient(135deg, var(--olive), var(--gold)); color: #fff; padding: 0.45rem 1.2rem; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: 600; transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s; }
+.nav-cta:hover { transform: translateY(-1px); opacity: 1; box-shadow: 0 4px 15px rgba(181, 154, 82, 0.4); }
 
-    /* ── Hero Dashboard Card ── */
-    .hero-dash-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      border-radius: 16px; padding: 1.5rem;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    }
-    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-    .kpi-card { background: rgba(255, 255, 255, 0.02); padding: 0.75rem; border-radius: 8px; }
-    .kpi-val { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
-    .kpi-lbl { font-size: 0.7rem; color: var(--text-muted); }
+/* ── LAYOUT & TYPOGRAPHY ── */
+.page-wrapper { position: relative; z-index: 2; }
+.sec { padding: 6rem 5%; max-width: 1400px; margin: 0 auto; }
+.sec-hl { font-family: var(--font-display); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
+.sec-hl::before { content: '// '; opacity: 0.5; }
+.sec-h { font-family: var(--font-heading); font-size: clamp(2rem, 2.5vw, 2.5rem); font-weight: 700; color: var(--text-main); line-height: 1.1; margin-bottom: 1rem; }
+.sec-p { color: var(--text-muted); font-size: 1rem; max-width: 650px; line-height: 1.6; }
+.text-center { text-align: center; }
+.text-center .sec-p { margin: 0 auto; }
+.hdiv { height: 1px; margin: 0 5%; background: linear-gradient(90deg, transparent, var(--border-gold), transparent); opacity: 0.3; }
 
-    /* ── Responsive Rules ── */
-    @media (max-width: 960px) {
-      .hero-grid { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
-      .hero-btns, .badge-row { justify-content: center; }
-      .nav-links { display: none; }
-    }
-  </style>
+/* ── PANELS & CARDS ── */
+.glass-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-gold);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02), 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ── HERO SECTION ── */
+.hero { min-height: 100vh; display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 4rem; padding: 7rem 5% 3rem; max-width: 1400px; margin: 0 auto; }
+.badge-row { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.badge { font-size: 0.65rem; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--border-gold); backdrop-filter: blur(5px); }
+.badge-top { background: rgba(181, 154, 82, 0.15); color: var(--gold); }
+.badge-upwork { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: var(--emerald); text-decoration: none; }
+
+.hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 4vw, 4rem); font-weight: 900; line-height: 1.05; margin-bottom: 1rem; text-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+.hero h1 .highlight { background: linear-gradient(90deg, var(--gold), var(--olive)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-btns { display: flex; gap: 1rem; margin: 2.5rem 0; }
+.btn-prime { background: linear-gradient(135deg, var(--olive), var(--gold)); color: #fff; padding: 0.8rem 1.8rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(181, 154, 82, 0.2); }
+.btn-prime:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(181, 154, 82, 0.4); }
+.btn-sec { border: 1px solid var(--border-gold); color: var(--text-main); font-size: 0.9rem; padding: 0.8rem 1.8rem; border-radius: 6px; font-weight: 600; text-decoration: none; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); transition: all 0.3s ease; }
+.btn-sec:hover { background: rgba(181, 154, 82, 0.2); border-color: var(--gold); transform: translateY(-3px); }
+
+.hero-stats { display: flex; gap: 2.5rem; }
+.stat-val { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--gold); text-shadow: 0 0 15px rgba(181, 154, 82, 0.3); }
+.stat-lbl { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.05em;}
+
+.hero-dash { perspective: 1200px; display: flex; justify-content: center; }
+.dash-tilt { padding: 1.5rem; width: 100%; max-width: 450px; transform: rotateY(-12deg) rotateX(5deg); box-shadow: 20px 20px 50px rgba(0,0,0,0.9), -5px -5px 30px rgba(181, 154, 82, 0.05); transition: transform 0.5s ease; border: 1px solid rgba(181,154,82,0.3); }
+.dash-tilt:hover { transform: rotateY(0deg) rotateX(0deg) scale(1.02); border-color: var(--gold); }
+.dash-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.2rem; }
+.dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+.kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1.2rem; }
+.kpi-card { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 8px; transition: border-color 0.3s; }
+.kpi-card:hover { border-color: var(--border-gold); }
+
+/* ── CHARTS SHOWCASE (3 Lines of 10 Visualizations) ── */
+.charts-marquee-container {
+  margin-top: 1.5rem;
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  padding: 0.5rem 0;
+}
+.charts-marquee-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: scrollChartsMarquee 70s linear infinite;
+}
+.charts-marquee-container:hover .charts-marquee-track {
+  animation-play-state: paused;
+}
+/* Alternate scroll directions or speeds if desired, all moving left-to-right here */
+@keyframes scrollChartsMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.chart-card {
+  width: 320px;
+  padding: 1.5rem;
+  flex-shrink: 0;
+}
+.chart-card:hover { transform: translateY(-5px); border-color: var(--border-gold-glow); box-shadow: 0 10px 30px rgba(181, 154, 82, 0.15); }
+.cc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.cc-title { font-weight: 600; font-size: 0.9rem; letter-spacing: 0.02em; }
+.cc-badge { font-size: 0.6rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 12px; background: rgba(181, 154, 82, 0.15); border: 1px solid var(--border-gold); color: var(--gold); }
+.chart-container { position: relative; height: 180px; width: 100%; }
+
+/* ── ALTERYX WORKFLOWS (4 Items) ── */
+.alteryx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; margin-top: 3.5rem; }
+.workflow-card { padding: 1.2rem; text-align: center; }
+.workflow-img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-gold); margin-bottom: 1.2rem; opacity: 0.85; filter: grayscale(20%); transition: all 0.4s ease; }
+.workflow-card:hover { transform: translateY(-5px); border-color: var(--border-gold-glow); }
+.workflow-card:hover .workflow-img { opacity: 1; filter: grayscale(0%); border-color: var(--gold); box-shadow: 0 0 20px rgba(181, 154, 82, 0.2); }
+.wf-title { font-family: var(--font-display); font-size: 0.95rem; color: var(--gold); margin-bottom: 0.4rem; }
+.wf-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+
+/* ── CLIENT FEEDBACK (20 Testimonials Marquee) ── */
+.marquee-container {
+  margin-top: 3.5rem;
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  padding: 1rem 0;
+}
+.marquee-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: scrollMarquee 50s linear infinite;
+}
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes scrollMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.test-card {
+  width: 350px;
+  padding: 1.8rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.test-card:hover { transform: translateY(-3px); border-color: var(--gold); }
+.quote-mark { position: absolute; top: 1rem; right: 1.5rem; font-size: 3.5rem; color: rgba(181, 154, 82, 0.1); font-family: serif; line-height: 1; }
+.test-text { font-size: 0.85rem; font-style: italic; color: var(--text-main); margin-bottom: 1.5rem; line-height: 1.6; position: relative; z-index: 1; }
+.test-author { display: flex; align-items: center; gap: 0.8rem; margin-top: auto; }
+.author-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--olive), var(--gold)); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+.author-info h4 { font-size: 0.85rem; margin: 0; color: var(--gold); }
+.author-info p { font-size: 0.7rem; color: var(--text-muted); margin: 0; }
+
+/* ── SERVICES ── */
+.svcs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; margin-top: 3.5rem; }
+.svc { padding: 2.5rem 1.8rem; text-align: center; }
+.svc:hover { transform: translateY(-5px); border-color: var(--border-gold-glow); box-shadow: 0 10px 30px rgba(181, 154, 82, 0.1); }
+.svc-ico { font-size: 2.5rem; margin-bottom: 1.2rem; display: block; filter: drop-shadow(0 0 10px rgba(181, 154, 82, 0.4)); }
+.svc h3 { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 0.8rem; color: var(--text-main); }
+.svc p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+.tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.tag { font-size: 0.65rem; padding: 0.3rem 0.8rem; border-radius: 20px; background: rgba(0,0,0,0.6); color: var(--gold); border: 1px solid var(--border-gold); font-weight: 500; letter-spacing: 0.05em; }
+
+/* ── CONTACT ── */
+.contact-wrap { max-width: 600px; margin: 3.5rem auto 0; padding: 2.5rem; }
+.cform { display: flex; flex-direction: column; gap: 1.2rem; }
+.ci { background: rgba(0,0,0,0.6); border: 1px solid var(--border-gold); border-radius: 8px; padding: 1rem 1.2rem; color: var(--text-main); font-family: var(--font-body); font-size: 0.95rem; outline: none; width: 100%; transition: all 0.3s ease; }
+.ci:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(181, 154, 82, 0.2); }
+textarea.ci { resize: vertical; min-height: 140px; }
+.csub { background: linear-gradient(135deg, var(--olive), var(--gold)); color: #fff; border: none; padding: 1rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+.csub:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(181, 154, 82, 0.4); }
+
+footer { text-align: center; padding: 2.5rem 5%; border-top: 1px solid var(--border-gold); margin-top: 5rem; color: var(--text-muted); font-size: 0.85rem; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+
+@media(max-width: 960px) {
+  .hero { grid-template-columns: 1fr; text-align: center; padding-top: 8rem; }
+  .badge-row, .hero-btns, .hero-stats { justify-content: center; }
+  .nav-links { display: none; }
+  .dash-tilt { transform: none; max-width: 100%; }
+}
+</style>
 </head>
 <body>
 
-  <!-- Background Canvas -->
-  <canvas id="bg"></canvas>
+<!-- Three.js Nodes Overlay -->
+<canvas id="bg"></canvas>
 
-  <!-- Navigation -->
-  <nav>
-    <div class="logo">Insight<em>Grid</em></div>
-    <ul class="nav-links">
-      <li><a href="#tools">Services</a></li>
-      <li><a href="#charts">Dashboards</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <a href="#contact" class="nav-cta">Get a Quote</a>
-  </nav>
+<!-- Full Screen Brain Image -->
+<div class="brain-layer">
+  <img src="ChatGPT Image Jul 31, 2026, 11_49_22 PM.png" alt="AI Neural Brain" class="brain-img" />
+</div>
 
-  <main class="container">
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-grid">
-        <div class="hero-left">
-          <div class="badge-row">
-            <span class="badge badge-top">★ Top Rated — Upwork</span>
-          </div>
-          <h1>Data That Drives <br/><span class="highlight">Decisions & Results</span></h1>
-          <p class="hero-sub">Power BI · Tableau · Alteryx · Excel — end-to-end analytics and automation that transform complex numbers into actionable strategy.</p>
-          
-          <div class="hero-btns">
-            <a href="#contact" class="btn-prime">Start a Project</a>
-            <a href="#charts" class="btn-sec">View Work</a>
-          </div>
+<nav>
+  <div class="logo">Insight<em>Grid</em></div>
+  <ul class="nav-links">
+    <li><a href="#charts">Dashboards</a></li>
+    <li><a href="#alteryx">Workflows</a></li>
+    <li><a href="#testimonials">Feedback</a></li>
+    <li><a href="#services">Services</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Get a Quote</a>
+</nav>
+
+<div class="page-wrapper">
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="badge-row">
+        <span class="badge badge-top">★ Top Rated — Upwork</span>
+        <a href="#" class="badge badge-upwork">100% Job Success</a>
+      </div>
+      <h1>Data That<br/><span class="highlight">Thinks & Decides</span></h1>
+      <p class="sec-p" style="margin-bottom: 2rem; font-size: 1.1rem;">Advanced Data Architecture · Predictive Analytics · Intelligent Automation. Transforming raw metrics into strategic competitive advantage.</p>
+      
+      <div class="hero-btns">
+        <a href="#contact" class="btn-prime">Start a Project →</a>
+        <a href="#charts" class="btn-sec">View Live Dashboards</a>
+      </div>
+
+      <div class="hero-stats">
+        <div><div class="stat-val">150+</div><div class="stat-lbl">Projects</div></div>
+        <div><div class="stat-val">100%</div><div class="stat-lbl">Satisfaction</div></div>
+        <div><div class="stat-val">5.0★</div><div class="stat-lbl">Rating</div></div>
+      </div>
+    </div>
+
+    <div class="hero-dash">
+      <div class="dash-tilt glass-panel">
+        <div class="dash-header">
+          <div class="dot" style="background:#ef4444; color:#ef4444;"></div>
+          <div class="dot" style="background:#f59e0b; color:#f59e0b;"></div>
+          <div class="dot" style="background:#10b981; color:#10b981;"></div>
+          <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 0.4rem; font-weight: 600; letter-spacing: 0.05em;">LIVE PROCESSING NODE</span>
         </div>
-
-        <!-- Dashboard Showcase -->
-        <div class="hero-dash-card">
-          <div class="kpi-row">
-            <div class="kpi-card">
-              <div class="kpi-val" style="color: var(--accent-cyan);">$3.8M</div>
-              <div class="kpi-lbl">Revenue</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-val" style="color: var(--accent-green);">2,841</div>
-              <div class="kpi-lbl">Active Users</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-val" style="color: var(--accent-gold);">94.7%</div>
-              <div class="kpi-lbl">Efficiency</div>
-            </div>
-          </div>
-          <canvas id="heroLine" height="150"></canvas>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="stat-val" style="color:var(--emerald); font-size:1.1rem;">$3.8M</div><div class="stat-lbl">Revenue</div></div>
+          <div class="kpi-card"><div class="stat-val" style="color:var(--gold); font-size:1.1rem;">2,841</div><div class="stat-lbl">Active Users</div></div>
+          <div class="kpi-card"><div class="stat-val" style="color:var(--olive); font-size:1.1rem;">94.7%</div><div class="stat-lbl">Efficiency</div></div>
+        </div>
+        <div style="background: rgba(0,0,0,0.6); border-radius: 8px; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.05);">
+          <div class="chart-container" style="height: 120px;"><canvas id="heroLine"></canvas></div>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <script>
-    // Simplified Canvas Scene for Visual Atmosphere without Distraction
-    const canvas = document.getElementById('bg');
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  <div class="hdiv"></div>
+
+  <!-- ── CHARTS SHOWCASE (3 Lines of 10 Visualizations) ── -->
+  <section class="sec" style="padding-left: 0; padding-right: 0; max-width: 100%;" id="charts">
+    <div class="text-center" style="padding: 0 5%; margin-bottom: 2.5rem;">
+      <div class="sec-hl">Visualization Intelligence</div>
+      <h2 class="sec-h">30 Ways to See Your Business.</h2>
+      <p class="sec-p">Interactive visual discovery using Power BI, Tableau, and embedded analytics.</p>
+    </div>
+    
+    <!-- Line 1 (Charts 1-10) -->
+    <div class="charts-marquee-container">
+      <div class="charts-marquee-track" id="charts-track-1">
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Revenue Trend</span><span class="cc-badge">POWER BI</span></div><div class="chart-container"><canvas id="c1"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Regional Mix</span><span class="cc-badge">TABLEAU</span></div><div class="chart-container"><canvas id="c2"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">ETL Pipeline Volume</span><span class="cc-badge">ALTERYX</span></div><div class="chart-container"><canvas id="c3"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Forecast Modeling</span><span class="cc-badge">EXCEL</span></div><div class="chart-container"><canvas id="c4"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Skill Matrix</span><span class="cc-badge">RADAR</span></div><div class="chart-container"><canvas id="c5"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Market Share</span><span class="cc-badge">POLAR</span></div><div class="chart-container"><canvas id="c6"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Price vs Conversion</span><span class="cc-badge">SCATTER</span></div><div class="chart-container"><canvas id="c7"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Risk Assessment</span><span class="cc-badge">BUBBLE</span></div><div class="chart-container"><canvas id="c8"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Top Products</span><span class="cc-badge">BAR (H)</span></div><div class="chart-container"><canvas id="c9"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Cost Breakdown</span><span class="cc-badge">PIE</span></div><div class="chart-container"><canvas id="c10"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- Line 2 (Charts 11-20) -->
+    <div class="charts-marquee-container">
+      <div class="charts-marquee-track" id="charts-track-2" style="animation-duration: 65s;">
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">User Retention</span><span class="cc-badge">LINE AREA</span></div><div class="chart-container"><canvas id="c11"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Sales by Category</span><span class="cc-badge">STACKED</span></div><div class="chart-container"><canvas id="c12"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Server Uptime</span><span class="cc-badge">DOUGHNUT</span></div><div class="chart-container"><canvas id="c13"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Profit Margin</span><span class="cc-badge">MULTI-AXIS</span></div><div class="chart-container"><canvas id="c14"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Traffic Sources</span><span class="cc-badge">ANALYTICS</span></div><div class="chart-container"><canvas id="c15"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Conversion Funnel</span><span class="cc-badge">POWER BI</span></div><div class="chart-container"><canvas id="c16"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Customer Lifetime Value</span><span class="cc-badge">TABLEAU</span></div><div class="chart-container"><canvas id="c17"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Inventory Flow</span><span class="cc-badge">ALTERYX</span></div><div class="chart-container"><canvas id="c18"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Churn Prediction</span><span class="cc-badge">MODELING</span></div><div class="chart-container"><canvas id="c19"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Campaign ROI</span><span class="cc-badge">MARKETING</span></div><div class="chart-container"><canvas id="c20"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- Line 3 (Charts 21-30) -->
+    <div class="charts-marquee-container">
+      <div class="charts-marquee-track" id="charts-track-3" style="animation-duration: 75s;">
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Support Ticket Load</span><span class="cc-badge">OPS</span></div><div class="chart-container"><canvas id="c21"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Latency Tracking</span><span class="cc-badge">TELEMETRY</span></div><div class="chart-container"><canvas id="c22"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Sales Rep Performance</span><span class="cc-badge">CRM</span></div><div class="chart-container"><canvas id="c23"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">API Response Times</span><span class="cc-badge">CLOUD</span></div><div class="chart-container"><canvas id="c24"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Budget Allocation</span><span class="cc-badge">FINANCE</span></div><div class="chart-container"><canvas id="c25"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Session Duration</span><span class="cc-badge">WEB</span></div><div class="chart-container"><canvas id="c26"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Error Rate Monitor</span><span class="cc-badge">SYSTEM</span></div><div class="chart-container"><canvas id="c27"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Product Adoption</span><span class="cc-badge">SAAS</span></div><div class="chart-container"><canvas id="c28"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Fulfillment Velocity</span><span class="cc-badge">LOGISTICS</span></div><div class="chart-container"><canvas id="c29"></canvas></div></div>
+        <div class="chart-card glass-panel"><div class="cc-head"><span class="cc-title">Executive Summary</span><span class="cc-badge">DASHBOARD</span></div><div class="chart-container"><canvas id="c30"></canvas></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hdiv"></div>
+
+  <!-- ── ALTERYX WORKFLOWS (4 Items) ── -->
+  <section class="sec" id="alteryx">
+    <div class="text-center">
+      <div class="sec-hl">Data Engineering</div>
+      <h2 class="sec-h">Alteryx Architecture.</h2>
+      <p class="sec-p">Four pillars of robust ETL automation powering seamless reporting layers.</p>
+    </div>
+    
+    <div class="alteryx-grid">
+      <div class="workflow-card glass-panel">
+        <img src="https://placehold.co/600x350/121812/B59A52?text=Enterprise+ETL+Pipeline" alt="ETL Pipeline" class="workflow-img">
+        <div class="wf-title">Enterprise ETL Pipeline</div>
+        <div class="wf-desc">Consolidating fragmented SQL and local sources into a pristine master dataset.</div>
+      </div>
+      <div class="workflow-card glass-panel">
+        <img src="https://placehold.co/600x350/121812/B59A52?text=Predictive+Time-Series" alt="Predictive Macro" class="workflow-img">
+        <div class="wf-title">Predictive Forecasting Macro</div>
+        <div class="wf-desc">ARIMA & ETS time-series modules calculating expected demand curves.</div>
+      </div>
+      <div class="workflow-card glass-panel">
+        <img src="https://placehold.co/600x350/121812/B59A52?text=Geospatial+Data+Blending" alt="Spatial Blending" class="workflow-img">
+        <div class="wf-title">Geospatial Data Blending</div>
+        <div class="wf-desc">Generating trade-area polygons and distance formulas for retail mapping.</div>
+      </div>
+      <div class="workflow-card glass-panel">
+        <img src="https://placehold.co/600x350/121812/B59A52?text=API+Pagination+%26+Parsing" alt="API Parsing" class="workflow-img">
+        <div class="wf-title">API Pagination & Parsing</div>
+        <div class="wf-desc">Iterative macros fetching REST APIs, parsing complex JSON directly into tabular format.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hdiv"></div>
+
+  <!-- ── CLIENT FEEDBACK (Marquee of 20) ── -->
+  <section class="sec" style="padding-left: 0; padding-right: 0; max-width: 100%;" id="testimonials">
+    <div class="text-center" style="padding: 0 5%;">
+      <div class="sec-hl">Client Success</div>
+      <h2 class="sec-h">20+ 5-Star Reviews.</h2>
+      <p class="sec-p">Real feedback from Upwork and enterprise contracts.</p>
+    </div>
+    
+    <div class="marquee-container">
+      <div class="marquee-track" id="marquee-track">
+        <!-- JS populates testimonials here -->
+      </div>
+    </div>
+  </section>
+
+  <div class="hdiv"></div>
+
+  <!-- ── SERVICES ── -->
+  <section class="sec" id="services">
+    <div class="text-center">
+      <div class="sec-hl">Capabilities</div>
+      <h2 class="sec-h">What We Build.</h2>
+    </div>
+    <div class="svcs-grid">
+      <div class="svc glass-panel">
+        <span class="svc-ico">📊</span>
+        <h3>Power BI Mastery</h3>
+        <p>Interactive drill-through reports, deep DAX logic, and complex Row-Level Security models.</p>
+        <div class="tags"><span class="tag">DAX</span><span class="tag">Power Query</span><span class="tag">RLS</span></div>
+      </div>
+      <div class="svc glass-panel">
+        <span class="svc-ico">📈</span>
+        <h3>Tableau Intelligence</h3>
+        <p>Visually stunning workbooks with heavy LOD expressions and automated Server publishing.</p>
+        <div class="tags"><span class="tag">LOD</span><span class="tag">Prep</span><span class="tag">Server</span></div>
+      </div>
+      <div class="svc glass-panel">
+        <span class="svc-ico">⚙️</span>
+        <h3>Alteryx Automation</h3>
+        <p>End-to-end automated pipelines, predictive modeling, and spatial analytics.</p>
+        <div class="tags"><span class="tag">ETL</span><span class="tag">Macros</span><span class="tag">Spatial</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hdiv"></div>
+
+  <!-- ── CONTACT ── -->
+  <section class="sec" id="contact">
+    <div class="text-center">
+      <div class="sec-hl">Initialize Sequence</div>
+      <h2 class="sec-h">Ready to Optimize?</h2>
+      <p class="sec-p">Drop a message to map out your next data infrastructure project.</p>
+    </div>
+    <div class="contact-wrap glass-panel">
+      <form class="cform" onsubmit="event.preventDefault(); alert('Form submitted successfully!');">
+        <input type="text" class="ci" placeholder="Your Name" required>
+        <input type="email" class="ci" placeholder="Email Address" required>
+        <textarea class="ci" placeholder="Project goals, current tech stack, or data needs..." required></textarea>
+        <button type="submit" class="csub">Send Request</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 InsightGrid Analytics & Automation. All rights reserved.</p>
+  </footer>
+
+</div>
+
+<!-- ── SCRIPTS ── -->
+<script>
+/* === THREE.JS ELECTRIC NODES === */
+const canvas = document.getElementById('bg');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 15;
+
+const particlesGeometry = new THREE.BufferGeometry();
+const particleCount = 300;
+const posArray = new Float32Array(particleCount * 3);
+const velocities = [];
+
+for(let i = 0; i < particleCount * 3; i+=3) {
+    posArray[i] = (Math.random() - 0.5) * 40;
+    posArray[i+1] = (Math.random() - 0.5) * 40;
+    posArray[i+2] = (Math.random() - 0.5) * 20;
+    velocities.push({ x: (Math.random() - 0.5) * 0.02, y: (Math.random() - 0.5) * 0.02, z: (Math.random() - 0.5) * 0.02 });
+}
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+const particlesMaterial = new THREE.PointsMaterial({ size: 0.08, color: 0xB59A52, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
+const particleMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particleMesh);
+
+const lineMaterial = new THREE.LineBasicMaterial({ color: 0x6B7A3D, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending });
+const lineMesh = new THREE.LineSegments(particlesGeometry, lineMaterial);
+scene.add(lineMesh);
+
+let mouseX = 0, mouseY = 0;
+document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth) - 0.5;
+    mouseY = (e.clientY / window.innerHeight) - 0.5;
+});
+
+function animateThree() {
+    requestAnimationFrame(animateThree);
+    const positions = particleMesh.geometry.attributes.position.array;
+    for(let i=0; i < particleCount; i++) {
+        positions[i*3] += velocities[i].x;
+        positions[i*3+1] += velocities[i].y;
+        if(positions[i*3] > 20 || positions[i*3] < -20) velocities[i].x *= -1;
+        if(positions[i*3+1] > 20 || positions[i*3+1] < -20) velocities[i].y *= -1;
+    }
+    particleMesh.geometry.attributes.position.needsUpdate = true;
+    camera.position.x += (mouseX * 4 - camera.position.x) * 0.05;
+    camera.position.y += (-mouseY * 4 - camera.position.y) * 0.05;
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+}
+animateThree();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
-
-    // Subtle Particle Grid
-    const geometry = new THREE.BufferGeometry();
-    const count = 300;
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 10;
+/* === INITIALIZE MARQUEES FIRST, THEN CHARTS === */
+window.addEventListener('DOMContentLoaded', () => {
+  // 1. Duplicate all 3 chart marquee tracks for seamless loops FIRST
+  ['charts-track-1', 'charts-track-2', 'charts-track-3'].forEach(id => {
+    const track = document.getElementById(id);
+    if (track) {
+      track.innerHTML += track.innerHTML;
     }
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const material = new THREE.PointsMaterial({ size: 0.02, color: 0x38bdf8 });
-    const points = new THREE.Points(geometry, material);
-    scene.add(points);
-
-    function animate() {
-      requestAnimationFrame(animate);
-      points.rotation.y += 0.0005;
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    // Responsive Canvas
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+  
+  // 2. Populate and duplicate testimonials FIRST
+  const marqueeTrack = document.getElementById('marquee-track');
+  if (marqueeTrack) {
+    const testimonials = [
+      { text: "Usama completely transformed our analytics infrastructure. The Power BI dashboards are fast and clean.", name: "Sarah Jenkins", role: "VP of Data, TechCorp" },
+      { text: "Exceptional Alteryx automation work. What took us 3 days now runs in 5 minutes.", name: "David Miller", role: "Director of Ops, RetailChain" },
+      { text: "Top-tier communication and expert level DAX knowledge. Absolute pleasure to work with.", name: "Elena Rostova", role: "Product Lead, FinTech Global" },
+      { text: "Delivered complex SQL and Tableau dashboards ahead of schedule. Highly recommended!", name: "Marcus Vance", role: "CTO, DataFlow Inc." },
+      { text: "His predictive modeling dashboards gave our executive team the exact foresight needed.", name: "Jessica Taylor", role: "Head of Strategy, LogiCorp" },
+      { text: "Incredible attention to detail in data cleaning and ETL architecture.", name: "Ahmed Al-Farsi", role: "Senior Analyst, GulfTech" },
+      { text: "The custom visual components he built elevated our entire reporting suite.", name: "Rachel Green", role: "Operations Manager, CloudScale" },
+      { text: "Fast turnaround, professional code structure, and deep database insights.", name: "Liam O'Connor", role: "Founder, MetricsLab" },
+      { text: "His expertise in geospatial blending saved our retail expansion project.", name: "Zoe Wang", role: "Expansion Director, UrbanRetail" },
+      { text: "A true professional who knows data inside and out. Will hire again!", name: "Carlos Mendez", role: "IT Lead, ServCo" },
+      { text: "Superb dashboards and wonderful collaboration throughout the contract.", name: "Anna Smith", role: "Product Owner, SaaSify" },
+      { text: "Transformed our chaotic Excel sheets into a streamlined Power BI ecosystem.", name: "Kevin Durant", role: "Finance Manager, Apex Corp" },
+      { text: "The automated API ingestion pipeline runs flawlessly every single day.", name: "Sophie Turner", role: "Data Engineer, WebPulse" },
+      { text: "Deep technical skill combined with an eye for clean UI design.", name: "Brian O'Neil", role: "CEO, InnovateIQ" },
+      { text: "Clear documentation and robust Alteryx macros. Outstanding work!", name: "Yuki Tanaka", role: "BI Lead, Osaka Systems" },
+      { text: "He understood our complex requirements immediately and executed perfectly.", name: "Claire Dupont", role: "Analytics Head, ParisMedia" },
+      { text: "Reliable, highly skilled, and delivers enterprise-grade quality.", name: "Mohammed Khan", role: "Director, Delta Solutions" },
+      { text: "The performance tuning on our SQL queries made our dashboards load instantly.", name: "Lucas Vance", role: "DevOps Lead, CloudMatrix" },
+      { text: "Best data consultant we've worked with on Upwork by far.", name: "Emily Watson", role: "Operations Director, BrandScale" },
+      { text: "Flawless execution from data warehousing to final presentation views.", name: "Oliver Queen", role: "Managing Director, StarCorp" }
+    ];
+    
+    let htmlContent = '';
+    testimonials.forEach(t => {
+      htmlContent += `
+        <div class="test-card glass-panel">
+          <div class="quote-mark">“</div>
+          <p class="test-text">"${t.text}"</p>
+          <div class="test-author">
+            <div class="author-avatar">${t.name.charAt(0)}</div>
+            <div class="author-info">
+              <h4>${t.name}</h4>
+              <p>${t.role}</p>
+            </div>
+          </div>
+        </div>
+      `;
     });
+    marqueeTrack.innerHTML = htmlContent + htmlContent;
+  }
 
-    // Sample Chart JS Setup
-    const ctx = document.getElementById('heroLine').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-          label: 'Performance Trend',
-          data: [12, 19, 14, 25, 22, 30],
-          borderColor: '#38bdf8',
-          borderWidth: 2,
-          tension: 0.4,
-          fill: false
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-          y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
-        }
-      }
-    });
-  </script>
+  /* === CHART.JS INITIALIZATIONS (30 Visualizations) === */
+  Chart.defaults.color = '#9ba89b';
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.font.size = 10;
+  Chart.defaults.borderColor = 'rgba(181, 154, 82, 0.08)';
+
+  const cOpt = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+  const axOpt = { scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(181, 154, 82, 0.08)' } } } };
+
+  new Chart(document.getElementById('heroLine'), { type: 'line', data: { labels: ['1','2','3','4','5','6'], datasets: [{ data: [12,19,14,25,22,30], borderColor: '#10b981', tension: 0.4, borderWidth: 2, pointRadius: 0 }] }, options: {...cOpt, ...axOpt} });
+
+  new Chart(document.getElementById('c1'), { type: 'bar', data: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], datasets: [{ data: [65, 59, 80, 81], backgroundColor: '#B59A52', borderRadius: 4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c2'), { type: 'doughnut', data: { labels: ['NA', 'EU', 'APAC'], datasets: [{ data: [55, 30, 15], backgroundColor: ['#6B7A3D', '#B59A52', '#10b981'], borderWidth: 0, cutout: '75%' }] }, options: {...cOpt, plugins: {legend: {display: true, position: 'right'}}} });
+  new Chart(document.getElementById('c3'), { type: 'line', data: { labels: ['W1', 'W2', 'W3', 'W4', 'W5'], datasets: [{ data: [100, 120, 115, 140, 160], borderColor: '#6B7A3D', tension: 0.3, fill: true, backgroundColor: 'rgba(107, 122, 61, 0.2)', pointRadius: 2 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c4'), { type: 'bar', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr'], datasets: [{ type: 'line', data: [40, 45, 55, 60], borderColor: '#f59e0b', borderWidth: 2, tension: 0.4, pointRadius: 0 }, { type: 'bar', data: [35, 40, 50, 58], backgroundColor: 'rgba(16, 185, 129, 0.7)', borderRadius: 3 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c5'), { type: 'radar', data: { labels: ['DAX', 'SQL', 'Python', 'Tableau', 'Alteryx'], datasets: [{ data: [90, 85, 70, 95, 88], backgroundColor: 'rgba(181, 154, 82, 0.4)', borderColor: '#B59A52', pointBackgroundColor: '#B59A52' }] }, options: {...cOpt, scales: { r: { grid: { color: 'rgba(255,255,255,0.1)' }, angleLines: { color: 'rgba(255,255,255,0.1)' }, ticks: { display: false } } } } });
+  new Chart(document.getElementById('c6'), { type: 'polarArea', data: { labels: ['A', 'B', 'C', 'D'], datasets: [{ data: [11, 16, 7, 14], backgroundColor: ['#6B7A3D', '#B59A52', '#10b981', '#d97706'], borderWidth: 0 }] }, options: {...cOpt, scales: { r: { ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.1)' } } } } });
+  new Chart(document.getElementById('c7'), { type: 'scatter', data: { datasets: [{ data: [{x: -10, y: 0}, {x: 0, y: 10}, {x: 10, y: 5}, {x: 0.5, y: 5.5}], backgroundColor: '#10b981' }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c8'), { type: 'bubble', data: { datasets: [{ data: [{x: 20, y: 30, r: 15}, {x: 40, y: 10, r: 10}, {x: 25, y: 25, r: 25}], backgroundColor: 'rgba(181, 154, 82, 0.7)' }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c9'), { type: 'bar', data: { labels: ['Prod A', 'Prod B', 'Prod C'], datasets: [{ data: [300, 250, 100], backgroundColor: '#6B7A3D', borderRadius: 4 }] }, options: {...cOpt, indexAxis: 'y', scales: { x: { grid: { color: 'rgba(181, 154, 82, 0.08)' } }, y: { grid: { display: false } } }} });
+  new Chart(document.getElementById('c10'), { type: 'pie', data: { labels: ['Ops', 'Mktg', 'R&D'], datasets: [{ data: [40, 35, 25], backgroundColor: ['#B59A52', '#d97706', '#6B7A3D'], borderWidth: 0 }] }, options: {...cOpt, plugins: {legend: {display: true, position: 'bottom'}}} });
+  new Chart(document.getElementById('c11'), { type: 'line', data: { labels: ['M1', 'M2', 'M3', 'M4'], datasets: [{ data: [80, 75, 85, 90], borderColor: '#10b981', fill: true, backgroundColor: 'rgba(16, 185, 129, 0.2)', tension: 0.4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c12'), { type: 'bar', data: { labels: ['Q1', 'Q2', 'Q3'], datasets: [{ label: 'Hardware', data: [10, 20, 30], backgroundColor: '#6B7A3D' }, { label: 'Software', data: [15, 25, 20], backgroundColor: '#B59A52' }] }, options: {...cOpt, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } } }} });
+  new Chart(document.getElementById('c13'), { type: 'doughnut', data: { labels: ['Up', 'Down'], datasets: [{ data: [99.9, 0.1], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 0 }] }, options: {...cOpt} });
+  new Chart(document.getElementById('c14'), { type: 'line', data: { labels: ['W1', 'W2', 'W3', 'W4'], datasets: [{ data: [20, 24, 22, 28], borderColor: '#B59A52', tension: 0.3 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c15'), { type: 'bar', data: { labels: ['Direct', 'Social', 'Organic'], datasets: [{ data: [45, 25, 30], backgroundColor: '#6B7A3D', borderRadius: 4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c16'), { type: 'line', data: { labels: ['Step 1', 'Step 2', 'Step 3'], datasets: [{ data: [100, 60, 25], borderColor: '#f59e0b', tension: 0.4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c17'), { type: 'bar', data: { labels: ['Tier 1', 'Tier 2', 'Tier 3'], datasets: [{ data: [120, 200, 350], backgroundColor: '#B59A52', borderRadius: 4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c18'), { type: 'line', data: { labels: ['Mon', 'Tue', 'Wed', 'Thu'], datasets: [{ data: [10, 15, 12, 18], borderColor: '#10b981', tension: 0.3, fill: true, backgroundColor: 'rgba(16, 185, 129, 0.1)' }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c19'), { type: 'doughnut', data: { labels: ['Low', 'Med', 'High'], datasets: [{ data: [70, 20, 10], backgroundColor: ['#6B7A3D', '#B59A52', '#d97706'], borderWidth: 0 }] }, options: {...cOpt} });
+  new Chart(document.getElementById('c20'), { type: 'bar', data: { labels: ['Ad A', 'Ad B', 'Ad C'], datasets: [{ data: [3.2, 4.5, 2.8], backgroundColor: '#10b981', borderRadius: 4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c21'), { type: 'line', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr'], datasets: [{ data: [50, 42, 38, 30], borderColor: '#d97706', tension: 0.3 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c22'), { type: 'line', data: { labels: ['1s', '2s', '3s', '4s'], datasets: [{ data: [120, 95, 80, 65], borderColor: '#6B7A3D', tension: 0.2 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c23'), { type: 'bar', data: { labels: ['Rep 1', 'Rep 2', 'Rep 3'], datasets: [{ data: [85, 92, 78], backgroundColor: '#B59A52', borderRadius: 4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c24'), { type: 'line', data: { labels: ['5m', '10m', '15m'], datasets: [{ data: [200, 180, 190], borderColor: '#10b981', tension: 0.4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c25'), { type: 'pie', data: { labels: ['Cloud', 'Labor', 'Licensing'], datasets: [{ data: [50, 30, 20], backgroundColor: ['#6B7A3D', '#B59A52', '#d97706'], borderWidth: 0 }] }, options: {...cOpt} });
+  new Chart(document.getElementById('c26'), { type: 'bar', data: { labels: ['Mon', 'Tue', 'Wed'], datasets: [{ data: [4.2, 5.1, 4.8], backgroundColor: '#B59A52', borderRadius: 4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c27'), { type: 'line', data: { labels: ['V1', 'V2', 'V3'], datasets: [{ data: [1.2, 0.8, 0.3], borderColor: '#ef4444', tension: 0.2 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c28'), { type: 'bar', data: { labels: ['Feature 1', 'Feature 2'], datasets: [{ data: [88, 76], backgroundColor: '#10b981', borderRadius: 4 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c29'), { type: 'line', data: { labels: ['Q1', 'Q2', 'Q3'], datasets: [{ data: [92, 95, 98], borderColor: '#6B7A3D', tension: 0.3 }] }, options: {...cOpt, ...axOpt} });
+  new Chart(document.getElementById('c30'), { type: 'doughnut', data: { labels: ['Complete', 'Pending'], datasets: [{ data: [94, 6], backgroundColor: ['#B59A52', '#333'], borderWidth: 0 }] }, options: {...cOpt} });
+});
+</script>
 </body>
 </html>
