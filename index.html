@@ -943,7 +943,7 @@ async function submitFormAsJson(event) {
   // which would destroy this site's light cream theme behind every section.
   // Instead, "bloom" is achieved cheaply via additive-blended ShaderMaterial glow
   // (see brainMat fragment shader below) — same visual payoff, zero regression risk.
-  const GOLD = 0xFFD46A; const GOLD2 = 0xFFB547; const GOLD3 = 0xFFEA9A; const BG = 0x050505;
+  const GOLD = 0xFFD46A; GOLD2 = 0xFFB547; GOLD3 = 0xFFEA9A; BG = 0x050505;
 
   /* ---- Groups: world (mouse-reactive) vs static atmosphere ---- */
   const world=new THREE.Group(); S.add(world);      // brain + core + icons + rays
@@ -974,7 +974,7 @@ async function submitFormAsJson(event) {
     positions[i*3]=px; positions[i*3+1]=py; positions[i*3+2]=pz;
 
     const t=(x+1)/2;
-    tmpColor.setHSL(.11+t*.08,.55,.42+Math.random()*.18); // gold→olive→violet gradient
+    tmpColor.setRGB(1.0,0.84+Math.random()*0.1,0.35); // gold→olive→violet gradient
     colors[i*3]=tmpColor.r; colors[i*3+1]=tmpColor.g; colors[i*3+2]=tmpColor.b;
     sizes[i]=Math.random()<0.06?2.6:1.1; // sparse brighter "glowing nodes"
     phases[i]=Math.random()*Math.PI*2;
