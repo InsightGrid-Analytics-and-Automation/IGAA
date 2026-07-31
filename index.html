@@ -194,6 +194,30 @@ nav{
 .chart-mini2 canvas{max-height:75px}
 
 /* ══════════════════════════════
+   FLOATING HOLO PANELS (hero 3D companion)
+   Small glass "satellite" widgets that float beside the
+   holographic brain scene — pure CSS, GPU-cheap, decorative.
+══════════════════════════════ */
+.hero{position:relative}
+.holo-panel{
+  position:absolute;z-index:3;pointer-events:none;
+  background:rgba(255,255,255,.55);
+  border:1px solid rgba(181,154,82,.3);
+  border-radius:12px;padding:.7rem .9rem;
+  backdrop-filter:blur(14px) saturate(160%);
+  box-shadow:0 14px 34px rgba(0,0,0,.07),0 0 24px rgba(181,154,82,.12);
+  font-family:'Space Grotesk',sans-serif;
+  animation:holoFloat 6.5s ease-in-out infinite;
+}
+.holo-panel .hp-label{font-size:.58rem;letter-spacing:.08em;color:var(--muted);font-weight:700;text-transform:uppercase}
+.holo-panel .hp-val{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:800;color:var(--white);margin-top:.15rem}
+.holo-panel .hp-val span{color:#0c8c62;font-size:.7rem;margin-left:.3rem}
+.hp1{top:6%;right:2%;animation-delay:0s}
+.hp2{bottom:10%;right:14%;animation-delay:-3.2s}
+@keyframes holoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@media(max-width:960px){.holo-panel{display:none}}
+
+/* ══════════════════════════════
    SECTION COMMONS
 ══════════════════════════════ */
 .sec{padding:6rem 5%;position:relative}
@@ -559,6 +583,9 @@ to{transform:scale(1.15) translateY(-20px)}
 <div class="page">
 
 <section class="hero">
+  <!-- Decorative floating glass panels that flank the 3D holographic brain -->
+  <div class="holo-panel hp1"><div class="hp-label">Model Confidence</div><div class="hp-val">98.2%<span>▲</span></div></div>
+  <div class="holo-panel hp2"><div class="hp-label">Nodes Synced</div><div class="hp-val">12.4K<span>▲</span></div></div>
   <div class="hero-left">
     <div class="badge-row">
       <span class="badge badge-top">
@@ -890,63 +917,212 @@ async function submitFormAsJson(event) {
   }
 }
 
-/* ════════════════════════════════
-   THREE.JS — 4D HYPER TUNNEL
-════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   THREE.JS — PROCEDURAL HOLOGRAPHIC AI BRAIN HERO
+   Everything below is generated at runtime — no images/PNGs.
+   Sections: (1) renderer/scene/bloom  (2) brain particle field
+   (3) neural connections  (4) energy core glow  (5) orbiting
+   analytics icons  (6) atmosphere (dust/rays/starfield)
+   (7) mouse parallax with auto-return  (8) render loop
+════════════════════════════════════════════════════════════ */
 (function(){
   const canvas=document.getElementById('bg');
-  const R=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-  R.setPixelRatio(Math.min(devicePixelRatio,2));
+  const isMobile=innerWidth<700, isTablet=innerWidth>=700&&innerWidth<1100;
+
+  /* ---- 1. Renderer / Scene / Camera / Bloom ---- */
+  const R=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+  R.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.5:2));
   R.setSize(innerWidth,innerHeight);
   const S=new THREE.Scene();
-  const C=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,300);
-  C.position.z=50;
+  S.fog=new THREE.FogExp2(0xece4d0,0.014); // matches page's cream backdrop for depth fade
+  const C=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,400);
+  C.position.set(0,0,42);
 
-  // Tunnel rings
-  const rings=[];
-  for(let i=0;i<60;i++){
-    const geo=new THREE.TorusGeometry(18+Math.sin(i*.4)*4,.12+Math.random()*.08,8,80);
-    const mat=new THREE.MeshBasicMaterial({
-      color:new THREE.Color().setHSL(.12+i*.001,.5,.4+Math.sin(i*.3)*.15), // Adjusted to Gold/Olive tones
-      transparent:true,opacity:.25+Math.sin(i*.25)*.1,wireframe:false
-    });
-    const m=new THREE.Mesh(geo,mat);
-    m.position.z=-i*4;
-    m.rotation.z=i*.15;
-    S.add(m);rings.push(m);
+  // NOTE: UnrealBloomPass/EffectComposer are intentionally NOT used here — on a
+  // transparent (alpha:true) canvas they flatten the background to opaque black,
+  // which would destroy this site's light cream theme behind every section.
+  // Instead, "bloom" is achieved cheaply via additive-blended ShaderMaterial glow
+  // (see brainMat fragment shader below) — same visual payoff, zero regression risk.
+  const GOLD=0xB59A52, OLIVE=0x6B7A3D, VIOLET=0x8A7A4F, CREAM=0xC3B091;
+
+  /* ---- Groups: world (mouse-reactive) vs static atmosphere ---- */
+  const world=new THREE.Group(); S.add(world);      // brain + core + icons + rays
+  const atmosphere=new THREE.Group(); S.add(atmosphere); // starfield + dust (subtle own parallax)
+
+  /* ---- 2. HOLOGRAPHIC BRAIN — procedural particle field ---- */
+  const brainGroup=new THREE.Group(); world.add(brainGroup);
+  const PCOUNT=isMobile?1400:isTablet?2600:4600;
+  const positions=new Float32Array(PCOUNT*3);
+  const colors=new Float32Array(PCOUNT*3);
+  const sizes=new Float32Array(PCOUNT);
+  const phases=new Float32Array(PCOUNT);
+  const tmpColor=new THREE.Color();
+
+  // Fibonacci sphere distribution warped into two brain-like hemispheres
+  const golden=Math.PI*(3-Math.sqrt(5));
+  for(let i=0;i<PCOUNT;i++){
+    const y=1-(i/(PCOUNT-1))*2;               // -1..1
+    const rXY=Math.sqrt(Math.max(0,1-y*y));
+    const theta=golden*i;
+    let x=Math.cos(theta)*rXY, z=Math.sin(theta)*rXY;
+    // brain-fold displacement via layered sine harmonics
+    const fold=1+.16*Math.sin(6*theta+y*4)*Math.cos(5*y*Math.PI)+.07*Math.sin(10*theta-3*y);
+    // central longitudinal groove (sulcus) between hemispheres
+    const groove=1-.22*Math.exp(-Math.pow(x*7,2));
+    const R0=9.5*fold*groove;
+    let px=x*R0*1.08, py=y*R0*0.92, pz=z*R0*1.22; // ellipsoid brain proportions
+    positions[i*3]=px; positions[i*3+1]=py; positions[i*3+2]=pz;
+
+    const t=(x+1)/2;
+    tmpColor.setHSL(.11+t*.08,.55,.42+Math.random()*.18); // gold→olive→violet gradient
+    colors[i*3]=tmpColor.r; colors[i*3+1]=tmpColor.g; colors[i*3+2]=tmpColor.b;
+    sizes[i]=Math.random()<0.06?2.6:1.1; // sparse brighter "glowing nodes"
+    phases[i]=Math.random()*Math.PI*2;
   }
+  const brainGeo=new THREE.BufferGeometry();
+  brainGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+  brainGeo.setAttribute('color',new THREE.BufferAttribute(colors,3));
+  brainGeo.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));
+  brainGeo.setAttribute('aPhase',new THREE.BufferAttribute(phases,1));
 
-  // Star field
-  const sc=2400,sp=new Float32Array(sc*3);
-  for(let i=0;i<sc;i++){sp[i*3]=(Math.random()-.5)*300;sp[i*3+1]=(Math.random()-.5)*300;sp[i*3+2]=(Math.random()-.5)*300}
-  const sg=new THREE.BufferGeometry();
-  sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
-  S.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xb59a52,size:.3,transparent:true,opacity:.5})));
+  const brainMat=new THREE.ShaderMaterial({
+    uniforms:{uTime:{value:0},uPixelRatio:{value:R.getPixelRatio()}},
+    vertexShader:`
+      attribute float aSize; attribute float aPhase;
+      varying vec3 vColor;
+      uniform float uTime; uniform float uPixelRatio;
+      void main(){
+        vColor=color;
+        vec3 p=position;
+        p+=normalize(position)*sin(uTime*1.1+aPhase)*.18; // gentle breathing
+        vec4 mv=modelViewMatrix*vec4(p,1.0);
+        float pulse=1.0+0.35*sin(uTime*2.0+aPhase);
+        gl_PointSize=aSize*pulse*uPixelRatio*(140.0/-mv.z);
+        gl_Position=projectionMatrix*mv;
+      }`,
+    fragmentShader:`
+      varying vec3 vColor;
+      void main(){
+        float d=length(gl_PointCoord-vec2(.5));
+        float glow=smoothstep(.5,0.0,d);
+        gl_FragColor=vec4(vColor,glow*0.9);
+      }`,
+    vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending
+  });
+  const brainPoints=new THREE.Points(brainGeo,brainMat);
+  brainGroup.add(brainPoints);
 
-  // Floating data cubes
-  const cubes=[];
-  for(let i=0;i<12;i++){
-    const g=new THREE.BoxGeometry(.8+Math.random()*.8,.8+Math.random()*.8,.8+Math.random()*.8);
-    const m2=new THREE.MeshBasicMaterial({
-      color:new THREE.Color().setHSL([.12,.18,.25][i%3],.5,.5), // Gold/Olive/Green tones
-      transparent:true,opacity:.15,wireframe:true
-    });
-    const mesh=new THREE.Mesh(g,m2);
-    mesh.position.set((Math.random()-.5)*50,(Math.random()-.5)*40,(Math.random()-.5)*60);
-    S.add(mesh);cubes.push({mesh,rx:Math.random()*.01,ry:Math.random()*.015});
+  /* ---- 3. Neural connections between nearby glowing nodes ---- */
+  const nodeIdx=[]; for(let i=0;i<PCOUNT;i++) if(sizes[i]>2) nodeIdx.push(i);
+  const linePos=[];
+  const maxDist=isMobile?5.5:6.2;
+  for(let a=0;a<nodeIdx.length;a++){
+    for(let b=a+1;b<nodeIdx.length;b++){
+      const i=nodeIdx[a],j=nodeIdx[b];
+      const dx=positions[i*3]-positions[j*3],dy=positions[i*3+1]-positions[j*3+1],dz=positions[i*3+2]-positions[j*3+2];
+      const d=Math.sqrt(dx*dx+dy*dy+dz*dz);
+      if(d<maxDist){
+        linePos.push(positions[i*3],positions[i*3+1],positions[i*3+2],positions[j*3],positions[j*3+1],positions[j*3+2]);
+      }
+    }
   }
+  const lineGeo=new THREE.BufferGeometry();
+  lineGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(linePos),3));
+  const lineMat=new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:.16,blending:THREE.AdditiveBlending});
+  const neuralLines=new THREE.LineSegments(lineGeo,lineMat);
+  brainGroup.add(neuralLines);
 
-  let mx=0,my=0,t=0;
-  document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2});
-  addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
+  /* ---- 4. Energy core glow beneath the brain ---- */
+  function radialTexture(hex){
+    const cvs=document.createElement('canvas'); cvs.width=cvs.height=256;
+    const ctx=cvs.getContext('2d');
+    const g=ctx.createRadialGradient(128,128,0,128,128,128);
+    g.addColorStop(0,hex+'ff'); g.addColorStop(.4,hex+'88'); g.addColorStop(1,hex+'00');
+    ctx.fillStyle=g; ctx.fillRect(0,0,256,256);
+    return new THREE.CanvasTexture(cvs);
+  }
+  const coreTex=radialTexture('#B59A52');
+  const core=new THREE.Sprite(new THREE.SpriteMaterial({map:coreTex,transparent:true,opacity:.5,blending:THREE.AdditiveBlending,depthWrite:false}));
+  core.scale.set(26,26,1); core.position.set(0,-13,-4);
+  brainGroup.add(core);
 
+  /* ---- 5. Orbiting holographic analytics icons ---- */
+  const iconLabels=['📊 Power BI','📈 Tableau','🗄️ SQL','🐍 Python','❄️ Snowflake','🧩 Fabric','⚙️ Alteryx','☁️ Cloud','🧠 AI','💾 Database','📉 Analytics','📶 Charts'];
+  function iconTexture(label){
+    const cvs=document.createElement('canvas'); cvs.width=256; cvs.height=96;
+    const ctx=cvs.getContext('2d');
+    const g=ctx.createRadialGradient(128,48,4,128,48,110);
+    g.addColorStop(0,'rgba(181,154,82,.55)'); g.addColorStop(1,'rgba(181,154,82,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,256,96);
+    ctx.font='600 30px "Space Grotesk",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(34,34,34,.92)'; ctx.fillText(label,128,50);
+    return new THREE.CanvasTexture(cvs);
+  }
+  const orbitGroup=new THREE.Group(); world.add(orbitGroup);
+  const icons=iconLabels.map((label,i)=>{
+    const tex=iconTexture(label);
+    const spr=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));
+    const scale=isMobile?5.5:7.5;
+    spr.scale.set(scale,scale*.375,1);
+    const ring=i%3, radius=15+ring*4.5, incl=(ring-1)*.5;
+    const angle=(i/iconLabels.length)*Math.PI*2;
+    orbitGroup.add(spr);
+    return {spr,radius,incl,angle,speed:.12+ring*.03+Math.random()*.03};
+  });
+
+  /* ---- 6. Atmosphere — starfield, floating dust, light rays ---- */
+  const scCount=isMobile?900:2200, sp=new Float32Array(scCount*3);
+  for(let i=0;i<scCount;i++){sp[i*3]=(Math.random()-.5)*260;sp[i*3+1]=(Math.random()-.5)*180;sp[i*3+2]=(Math.random()-.5)*260-40}
+  const starGeo=new THREE.BufferGeometry(); starGeo.setAttribute('position',new THREE.BufferAttribute(sp,3));
+  atmosphere.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:CREAM,size:.35,transparent:true,opacity:.45,blending:THREE.AdditiveBlending,depthWrite:false})));
+
+  const dustCount=isMobile?150:400, dp=new Float32Array(dustCount*3);
+  for(let i=0;i<dustCount;i++){dp[i*3]=(Math.random()-.5)*90;dp[i*3+1]=(Math.random()-.5)*60;dp[i*3+2]=(Math.random()-.5)*90}
+  const dustGeo=new THREE.BufferGeometry(); dustGeo.setAttribute('position',new THREE.BufferAttribute(dp,3));
+  const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({color:GOLD,size:.5,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false}));
+  world.add(dust);
+
+  const rays=new THREE.Group();
+  for(let i=0;i<5;i++){
+    const rayTex=radialTexture('#B59A52');
+    const ray=new THREE.Sprite(new THREE.SpriteMaterial({map:rayTex,transparent:true,opacity:.06,blending:THREE.AdditiveBlending,depthWrite:false}));
+    ray.scale.set(60,10,1); ray.position.set(0,0,-20);
+    ray.material.rotation=(i/5)*Math.PI*2;
+    rays.add(ray);
+  }
+  world.add(rays);
+
+  /* ---- 7. Mouse parallax with smooth auto-return ---- */
+  let mx=0,my=0,lastMove=Date.now(),targetX=0,targetY=0;
+  document.addEventListener('mousemove',e=>{
+    mx=(e.clientX/innerWidth-.5)*2; my=(e.clientY/innerHeight-.5)*2; lastMove=Date.now();
+  });
+  addEventListener('resize',()=>{
+    C.aspect=innerWidth/innerHeight; C.updateProjectionMatrix(); R.setSize(innerWidth,innerHeight);
+  });
+
+  /* ---- 8. Render loop ---- */
+  let t=0;
   (function tick(){
-    requestAnimationFrame(tick);t+=.008;
-    C.position.x+=(mx*4-C.position.x)*.03;
-    C.position.y+=(-my*3-C.position.y)*.03;
-    C.lookAt(0,0,-50);
-    rings.forEach((r,i)=>{r.rotation.z+=.002+i*.00005;r.rotation.x=Math.sin(t+i*.1)*.05});
-    cubes.forEach(c=>{c.mesh.rotation.x+=c.rx;c.mesh.rotation.y+=c.ry});
+    requestAnimationFrame(tick); t+=.01;
+    const idle=Date.now()-lastMove>1200; // camera drifts back to center once mouse stops
+    targetX+=((idle?0:mx)-targetX)*.04;
+    targetY+=((idle?0:my)-targetY)*.04;
+    world.rotation.y+=(targetX*.5-world.rotation.y)*.05;
+    world.rotation.x+=(-targetY*.3-world.rotation.x)*.05;
+    world.rotation.y+=.0009; // slow autonomous rotation ("breathing" brain)
+
+    brainMat.uniforms.uTime.value=t;
+    core.material.opacity=.4+Math.sin(t*1.4)*.15;
+    core.scale.setScalar(26+Math.sin(t*1.1)*2.5);
+    rays.rotation.z+=.0006;
+    dust.rotation.y+=.0008;
+
+    icons.forEach(o=>{
+      o.angle+=o.speed*.01;
+      o.spr.position.set(Math.cos(o.angle)*o.radius,Math.sin(o.angle*.7)*o.radius*o.incl,Math.sin(o.angle)*o.radius);
+    });
+
     R.render(S,C);
   })();
 })();
