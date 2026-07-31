@@ -89,6 +89,27 @@ nav {
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: color 0.2s; letter-spacing: 0.05em; text-transform: uppercase; }
 .nav-links a:hover { color: var(--gold); text-shadow: 0 0 8px rgba(181, 154, 82, 0.5); }
+
+.nav-right { display: flex; align-items: center; gap: 1.2rem; }
+.social-icons { display: flex; align-items: center; gap: 0.8rem; }
+.social-icon-link {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(181, 154, 82, 0.1);
+  border: 1px solid var(--border-gold);
+  transition: all 0.3s ease;
+  color: var(--text-main);
+  text-decoration: none;
+}
+.social-icon-link:hover {
+  background: rgba(181, 154, 82, 0.25);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(181, 154, 82, 0.4);
+}
+.social-icon-link svg { width: 16px; height: 16px; fill: currentColor; }
+
 .nav-cta { background: linear-gradient(135deg, var(--olive), var(--gold)); color: #fff; padding: 0.45rem 1.2rem; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: 600; transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s; }
 .nav-cta:hover { transform: translateY(-1px); opacity: 1; box-shadow: 0 4px 15px rgba(181, 154, 82, 0.4); }
 
@@ -159,7 +180,6 @@ nav {
 .charts-marquee-container:hover .charts-marquee-track {
   animation-play-state: paused;
 }
-/* Alternate scroll directions or speeds if desired, all moving left-to-right here */
 @keyframes scrollChartsMarquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -270,7 +290,23 @@ footer { text-align: center; padding: 2.5rem 5%; border-top: 1px solid var(--bor
     <li><a href="#testimonials">Feedback</a></li>
     <li><a href="#services">Services</a></li>
   </ul>
-  <a href="#contact" class="nav-cta">Get a Quote</a>
+  <div class="nav-right">
+    <div class="social-icons">
+      <!-- Upwork Profile -->
+      <a href="https://www.upwork.com/freelancers/muhammads336" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Upwork Profile">
+        <svg viewBox="0 0 24 24"><path d="M18.56 14.54c-.95 0-1.81-.39-2.44-1.02l-3.5 3.5c-.8.8-1.9 1.25-3.03 1.25-2.42 0-4.38-1.96-4.38-4.38 0-2.42 1.96-4.38 4.38-4.38 1.13 0 2.23.45 3.03 1.25l3.5-3.5c-.63-.63-1.49-1.02-2.44-1.02-3.53 0-6.38 2.85-6.38 6.38s2.85 6.38 6.38 6.38c1.76 0 3.36-.71 4.51-1.86l-1.42-1.42c-.85.85-2.01 1.38-3.09 1.38-2.42 0-4.38-1.96-4.38-4.38s1.96-4.38 4.38-4.38c1.08 0 2.24.53 3.09 1.38l1.42-1.42c-1.15-1.15-2.75-1.86-4.51-1.86-3.53 0-6.38 2.85-6.38 6.38s2.85 6.38 6.38 6.38c1.45 0 2.78-.5 3.84-1.34l3.16 3.16 1.42-1.42-3.16-3.16c.84-1.06 1.34-2.39 1.34-3.84 0-3.53-2.85-6.38-6.38-6.38z"/></svg>
+      </a>
+      <!-- Upwork Agency -->
+      <a href="https://www.upwork.com/agencies/2034792936818575783/" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Upwork Agency">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      </a>
+      <!-- LinkedIn Profile -->
+      <a href="https://www.linkedin.com/in/muhammad-usama-shafiq-8a4477b7/" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="LinkedIn Profile">
+        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+      </a>
+    </div>
+    <a href="#contact" class="nav-cta">Get a Quote</a>
+  </div>
 </nav>
 
 <div class="page-wrapper">
@@ -280,7 +316,7 @@ footer { text-align: center; padding: 2.5rem 5%; border-top: 1px solid var(--bor
     <div class="hero-left">
       <div class="badge-row">
         <span class="badge badge-top">★ Top Rated — Upwork</span>
-        <a href="#" class="badge badge-upwork">100% Job Success</a>
+        <a href="https://www.upwork.com/freelancers/muhammads336" target="_blank" rel="noopener noreferrer" class="badge badge-upwork">100% Job Success</a>
       </div>
       <h1>Data That<br/><span class="highlight">Thinks & Decides</span></h1>
       <p class="sec-p" style="margin-bottom: 2rem; font-size: 1.1rem;">Advanced Data Architecture · Predictive Analytics · Intelligent Automation. Transforming raw metrics into strategic competitive advantage.</p>
